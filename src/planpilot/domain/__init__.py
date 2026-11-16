@@ -1,8 +1,8 @@
 """Domain models for PlanPilot production scheduling."""
 
 from planpilot.domain.models import (
-    Assignment,
     BOM,
+    Assignment,
     BOMComponent,
     ChangeoverEntry,
     ChangeoverMatrix,

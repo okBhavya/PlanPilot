@@ -9,7 +9,6 @@ matrices, due dates, priority weights, and downtime windows.
 from __future__ import annotations
 
 import random
-from typing import Any
 
 from planpilot.domain.models import (
     BOM,
@@ -20,7 +19,6 @@ from planpilot.domain.models import (
     Machine,
     Material,
     MaterialFamily,
-    ObjectiveType,
     Operation,
     Order,
     OrderPriority,
@@ -96,11 +94,7 @@ class PlantGenerator:
         downtimes = self._generate_downtimes(machines)
 
         # Estimate horizon based on total processing time
-        total_proc = sum(
-            op.processing_time
-            for r in routings
-            for op in r.operations
-        )
+        total_proc = sum(op.processing_time for r in routings for op in r.operations)
         horizon = max(int(total_proc * self.due_date_tightness * 2), 1000)
 
         return Plant(
@@ -226,9 +220,7 @@ class PlantGenerator:
             )
         return routings
 
-    def _generate_orders(
-        self, routings: list[Routing], materials: list[Material]
-    ) -> list[Order]:
+    def _generate_orders(self, routings: list[Routing], materials: list[Material]) -> list[Order]:
         orders: list[Order] = []
         priorities = list(self.priority_weights.keys())
         weights = list(self.priority_weights.values())
@@ -238,8 +230,10 @@ class PlantGenerator:
             total_proc = sum(op.processing_time for op in routing.operations)
 
             release_time = self.rng.randint(0, max(1, total_proc // 2))
-            due_date = release_time + int(total_proc * self.due_date_tightness) + self.rng.randint(
-                0, total_proc
+            due_date = (
+                release_time
+                + int(total_proc * self.due_date_tightness)
+                + self.rng.randint(0, total_proc)
             )
             priority = self.rng.choices(priorities, weights=weights, k=1)[0]
             weight = float(priority.value)
@@ -258,9 +252,7 @@ class PlantGenerator:
             )
         return orders
 
-    def _generate_changeover_matrix(
-        self, machines: list[Machine]
-    ) -> ChangeoverMatrix:
+    def _generate_changeover_matrix(self, machines: list[Machine]) -> ChangeoverMatrix:
         entries: list[ChangeoverEntry] = []
         families = _material_families()
 
@@ -275,9 +267,7 @@ class PlantGenerator:
                                 machine_id=machine.id,
                                 from_material=f1,
                                 to_material=f2,
-                                setup_time=self.rng.randint(
-                                    *self.changeover_time_range
-                                ),
+                                setup_time=self.rng.randint(*self.changeover_time_range),
                             )
                         )
         return ChangeoverMatrix(entries=entries)

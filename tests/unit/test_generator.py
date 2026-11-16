@@ -47,8 +47,10 @@ class TestPlantGenerator:
         """Generated plant survives JSON round-trip."""
         g = PlantGenerator(seed=42)
         p = g.generate()
-        from planpilot.domain.models import Plant
         import json
+
+        from planpilot.domain.models import Plant
+
         data = json.loads(p.model_dump_json())
         p2 = Plant.model_validate(data)
         assert p.id == p2.id

@@ -9,7 +9,7 @@ and KPIs.
 from __future__ import annotations
 
 import enum
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Annotated, Any
 
 from pydantic import (
@@ -19,7 +19,6 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-
 
 # ---------------------------------------------------------------------------
 # Identifiers — typed aliases for readability
@@ -43,7 +42,7 @@ NonNegativeFloat = Annotated[float, Field(ge=0.0)]
 # ---------------------------------------------------------------------------
 # Enums
 # ---------------------------------------------------------------------------
-class OrderStatus(str, enum.Enum):
+class OrderStatus(enum.StrEnum):
     """Order lifecycle status."""
 
     PENDING = "pending"
@@ -62,7 +61,7 @@ class OrderPriority(int, enum.Enum):
     CRITICAL = 10
 
 
-class SolverStatus(str, enum.Enum):
+class SolverStatus(enum.StrEnum):
     """CP-SAT solver result status."""
 
     OPTIMAL = "optimal"
@@ -72,7 +71,7 @@ class SolverStatus(str, enum.Enum):
     UNKNOWN = "unknown"
 
 
-class ObjectiveType(str, enum.Enum):
+class ObjectiveType(enum.StrEnum):
     """Supported scheduling objective functions."""
 
     MAKESPAN = "makespan"
@@ -114,9 +113,7 @@ class DowntimeWindow(BaseModel):
     @model_validator(mode="after")
     def start_before_end(self) -> DowntimeWindow:
         if self.start >= self.end:
-            raise ValueError(
-                f"Downtime start ({self.start}) must be before end ({self.end})"
-            )
+            raise ValueError(f"Downtime start ({self.start}) must be before end ({self.end})")
         return self
 
 
@@ -138,7 +135,7 @@ class WorkCenter(BaseModel):
         return v.strip()
 
 
-class MaterialFamily(str, enum.Enum):
+class MaterialFamily(enum.StrEnum):
     """Material families for changeover logic."""
 
     STEEL = "steel"
@@ -312,9 +309,7 @@ class ChangeoverMatrix(BaseModel):
                 return e.setup_time
         return 0
 
-    def get_setup_time_any_machine(
-        self, from_mat: MaterialFamily, to_mat: MaterialFamily
-    ) -> int:
+    def get_setup_time_any_machine(self, from_mat: MaterialFamily, to_mat: MaterialFamily) -> int:
         """Get the max changeover for any machine (conservative estimate)."""
         times = [
             e.setup_time
@@ -415,55 +410,41 @@ class Plant(BaseModel):
                             f"unknown machine {mid}"
                         )
                 if op.material_id and op.material_id not in material_ids:
-                    errors.append(
-                        f"Operation {op.id} references unknown material {op.material_id}"
-                    )
+                    errors.append(f"Operation {op.id} references unknown material {op.material_id}")
 
         # Orders → routings
         for order in self.orders:
             if order.routing_id not in routing_ids:
-                errors.append(
-                    f"Order {order.id} references unknown routing {order.routing_id}"
-                )
+                errors.append(f"Order {order.id} references unknown routing {order.routing_id}")
             if order.material_id and order.material_id not in material_ids:
-                errors.append(
-                    f"Order {order.id} references unknown material {order.material_id}"
-                )
+                errors.append(f"Order {order.id} references unknown material {order.material_id}")
 
         # Downtimes → machines
         for dt in self.downtimes:
             if dt.machine_id not in machine_ids:
-                errors.append(
-                    f"Downtime references unknown machine {dt.machine_id}"
-                )
+                errors.append(f"Downtime references unknown machine {dt.machine_id}")
 
         # Changeover entries → machines
         for entry in self.changeover_matrix.entries:
             if entry.machine_id not in machine_ids:
-                errors.append(
-                    f"Changeover entry references unknown machine {entry.machine_id}"
-                )
+                errors.append(f"Changeover entry references unknown machine {entry.machine_id}")
 
         # Work centers → machines
         for wc in self.work_centers:
             for mid in wc.machine_ids:
                 if mid not in machine_ids:
-                    errors.append(
-                        f"Work center {wc.id} references unknown machine {mid}"
-                    )
+                    errors.append(f"Work center {wc.id} references unknown machine {mid}")
 
         # BOM components → materials
         for bom in self.boms:
             if bom.product_material_id not in material_ids:
                 errors.append(
-                    f"BOM {bom.id} references unknown product material "
-                    f"{bom.product_material_id}"
+                    f"BOM {bom.id} references unknown product material {bom.product_material_id}"
                 )
             for comp in bom.components:
                 if comp.material_id not in material_ids:
                     errors.append(
-                        f"BOM {bom.id} component references unknown material "
-                        f"{comp.material_id}"
+                        f"BOM {bom.id} component references unknown material {comp.material_id}"
                     )
 
         return errors
@@ -472,7 +453,7 @@ class Plant(BaseModel):
 # ---------------------------------------------------------------------------
 # Schedule / Assignment (solver output)
 # ---------------------------------------------------------------------------
-class TightConstraint(str, enum.Enum):
+class TightConstraint(enum.StrEnum):
     """Types of constraints that can be tight (binding) on an assignment."""
 
     PREDECESSOR_END = "predecessor_end"
@@ -500,9 +481,7 @@ class Assignment(BaseModel):
     @model_validator(mode="after")
     def start_before_end(self) -> Assignment:
         if self.start >= self.end:
-            raise ValueError(
-                f"Assignment start ({self.start}) must be before end ({self.end})"
-            )
+            raise ValueError(f"Assignment start ({self.start}) must be before end ({self.end})")
         return self
 
 
@@ -535,6 +514,7 @@ class SolverStats(BaseModel):
     num_variables: NonNegativeInt = 0
     num_constraints: NonNegativeInt = 0
     num_branches: NonNegativeInt = 0
+    infeasibility_core: list[str] = Field(default_factory=list)
 
 
 class Schedule(BaseModel):

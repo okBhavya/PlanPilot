@@ -11,7 +11,6 @@ Format:
 
 from __future__ import annotations
 
-import importlib.resources
 from pathlib import Path
 
 from planpilot.domain.models import (
@@ -72,14 +71,10 @@ def parse_orlib_instance(text: str) -> tuple[int, int, list[list[tuple[int, int]
     jobs: list[list[tuple[int, int]]] = []
     for i in range(1, num_jobs + 1):
         if i >= len(data_lines):
-            raise ValueError(
-                f"Expected {num_jobs} job lines but only found {len(data_lines) - 1}"
-            )
+            raise ValueError(f"Expected {num_jobs} job lines but only found {len(data_lines) - 1}")
         tokens = list(map(int, data_lines[i].split()))
         if len(tokens) != num_machines * 2:
-            raise ValueError(
-                f"Job {i} has {len(tokens)} tokens, expected {num_machines * 2}"
-            )
+            raise ValueError(f"Job {i} has {len(tokens)} tokens, expected {num_machines * 2}")
         ops: list[tuple[int, int]] = []
         for j in range(0, len(tokens), 2):
             machine_idx = tokens[j]
@@ -215,6 +210,4 @@ def list_benchmarks(benchmarks_dir: Path | None = None) -> list[str]:
     base_dir = benchmarks_dir or _BENCHMARKS_DIR
     if not base_dir.exists():
         return []
-    return sorted(
-        p.stem for p in base_dir.glob("*.txt")
-    )
+    return sorted(p.stem for p in base_dir.glob("*.txt"))

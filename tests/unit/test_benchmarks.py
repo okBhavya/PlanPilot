@@ -7,12 +7,10 @@ from pathlib import Path
 import pytest
 
 from planpilot.solver.benchmarks import (
-    KNOWN_OPTIMA,
     load_benchmark,
-    parse_orlib_instance,
     orlib_to_plant,
+    parse_orlib_instance,
 )
-
 
 BENCHMARKS_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "benchmarks"
 
@@ -97,6 +95,7 @@ class TestLoadBenchmark:
     def test_benchmark_json_roundtrip(self, name: str) -> None:
         """Benchmark plants survive JSON serialization."""
         import json
+
         from planpilot.domain.models import Plant
 
         plant = load_benchmark(name, BENCHMARKS_DIR)

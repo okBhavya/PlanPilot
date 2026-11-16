@@ -9,8 +9,6 @@ from pydantic import ValidationError
 
 from planpilot.domain.models import (
     Assignment,
-    BOM,
-    BOMComponent,
     ChangeoverEntry,
     ChangeoverMatrix,
     DowntimeWindow,
@@ -203,9 +201,9 @@ class TestChangeoverMatrix:
                 ),
             ]
         )
-        assert matrix.get_setup_time_any_machine(
-            MaterialFamily.STEEL, MaterialFamily.ALUMINIUM
-        ) == 20
+        assert (
+            matrix.get_setup_time_any_machine(MaterialFamily.STEEL, MaterialFamily.ALUMINIUM) == 20
+        )
 
 
 class TestAssignment:
@@ -238,16 +236,28 @@ class TestSchedule:
         return Schedule(
             assignments=[
                 Assignment(
-                    order_id="ORD1", operation_id="OP10", machine_id="M1",
-                    start=0, end=10, processing_time=10,
+                    order_id="ORD1",
+                    operation_id="OP10",
+                    machine_id="M1",
+                    start=0,
+                    end=10,
+                    processing_time=10,
                 ),
                 Assignment(
-                    order_id="ORD1", operation_id="OP20", machine_id="M2",
-                    start=10, end=25, processing_time=15,
+                    order_id="ORD1",
+                    operation_id="OP20",
+                    machine_id="M2",
+                    start=10,
+                    end=25,
+                    processing_time=15,
                 ),
                 Assignment(
-                    order_id="ORD2", operation_id="OP10", machine_id="M1",
-                    start=10, end=20, processing_time=10,
+                    order_id="ORD2",
+                    operation_id="OP10",
+                    machine_id="M1",
+                    start=10,
+                    end=20,
+                    processing_time=10,
                 ),
             ],
         )
@@ -283,13 +293,15 @@ class TestPlant:
         ]
         operations = [
             Operation(
-                id="OP10", sequence=10,
+                id="OP10",
+                sequence=10,
                 eligible_machine_ids=["M1", "M2"],
                 processing_time=10,
                 material_id="MAT1",
             ),
             Operation(
-                id="OP20", sequence=20,
+                id="OP20",
+                sequence=20,
                 eligible_machine_ids=["M1"],
                 processing_time=15,
                 material_id="MAT1",
