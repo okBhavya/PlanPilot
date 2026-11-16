@@ -1,6 +1,6 @@
 # PlanPilot Progress
 
-## Current Status: Phase 3 — Rule DSL + NL Rule Agent ✅ (Moving to Phase 4)
+## Current Status: Phase 4 — Grounded Explainability ✅ (Moving to Phase 5)
 
 ### Completed
 
@@ -63,52 +63,80 @@
 - [x] **Natural-Language Rule Agent** (`src/planpilot/agents/rule_agent.py`):
   - Multi-turn tool-calling loop with `lookup_entities`, `propose_rule`, `ask_clarification`, `list_active_rules`.
   - Prompt injection protection (user prompt encapsulated as data inside XML tags).
-- [x] **Comprehensive Test Verification**:
-  - Unit tests for all 9 rule compilers showing schedules obey each constraint (`tests/unit/test_rule_compilers.py`).
-  - Unit tests for each of the 5 validator stages with passing and failing tests (`tests/unit/test_validator.py`).
-  - Unit tests for versioned RuleStore (`tests/unit/test_rule_store.py`).
-  - Unit tests for LLM provider abstraction, cost estimation, DiskCache, and retries (`tests/unit/test_llm.py`).
-  - Unit tests for RuleAgent tool calling and clarification flows (`tests/unit/test_rule_agent.py`).
-  - Total 122 tests passing in 24s. Ruff clean, mypy strict clean (25 source files checked with 0 errors).
 
-### Phase 3 Hard Verification Gate Output
+#### Phase 4 — Grounded Explainability & Schedule Diff
+- [x] **Handcrafted Lateness Benchmark Instances** (`src/planpilot/explain/benchmarks.py`):
+  - 5 canonical cases with known mathematical root causes:
+    1. `competing_priority`: High-priority order takes machine -> root cause: `competing_order`.
+    2. `supply_delay`: Late raw material release -> root cause: `release_delay`.
+    3. `cleanout_gap`: Material changeover setup gap -> root cause: `changeover_setup`.
+    4. `downtime_overlap`: Maintenance blackout window -> root cause: `downtime_window`.
+    5. `routing_cascade`: Multi-operation sequential duration -> root cause: `routing_cascade`.
+- [x] **Fact Extraction & Critical-Chain Backward Tracer** (`src/planpilot/explain/facts.py`):
+  - Extracts typed, citation-addressable facts (`[F1]`, `[F2]`, ...) from solved schedules.
+  - Backtracks tight constraints backwards along the schedule to isolate the true root cause.
+  - Computes exact critical chain steps and `LatenessDiagnosis`.
+- [x] **Schedule Diff Engine** (`src/planpilot/explain/diff.py`):
+  - Compares baseline Schedule A vs updated Schedule B.
+  - Detects assignment deltas ($\Delta start$, $\Delta end$, $\Delta machine$, $\Delta setup$).
+  - Classifies movement (`EARLIER`, `LATER`, `REASSIGNED`, `UNCHANGED`).
+  - Attributes root causes (`RULE_IMPACT`, `RUSH_ORDER_INSERTION`, `DOWNTIME_INSERTION`, `CASCADE`).
+  - Computes `KPIDiff` and emits structured comparison facts.
+- [x] **Deterministic Citation Verifier** (`src/planpilot/explain/verifier.py`):
+  - Strict zero-hallucination verification engine.
+  - Requires every sentence to cite at least one `[Fn]`.
+  - Rejects unknown fact IDs.
+  - Enforces numeric reconciliation: any number mentioned in prose must exist in cited facts.
+- [x] **Grounded Explain Agent** (`src/planpilot/agents/explain_agent.py`):
+  - Answers "Why is order X late?" and "Why did job Y move?".
+  - Prompts LLM with structured fact table only.
+  - Automated self-correction retry loop when citation verification fails.
+  - Deterministic fallback summary if retries are exhausted.
+- [x] **Comprehensive Test Verification**:
+  - Handcrafted lateness benchmark tests proving root cause isolation across all 5 instances (`tests/unit/test_explain_facts.py`).
+  - Citation verifier tests proving rejection of uncited sentences, unknown IDs, and hallucinated numbers (`tests/unit/test_citation_verifier.py`).
+  - Schedule diff tests verifying delta detection and movement attribution (`tests/unit/test_schedule_diff.py`).
+  - Explain agent tests verifying grounded answers and self-correction loops (`tests/unit/test_explain_agent.py`).
+  - Total 139 unit and integration tests passing in 31s. Ruff clean, mypy strict clean (30 source files checked with 0 errors).
+
+### Phase 4 Hard Verification Gate Output
 ```
 tests/unit/test_benchmarks.py (23 tests) PASSED
+tests/unit/test_citation_verifier.py (6 tests) PASSED
 tests/unit/test_domain.py (37 tests) PASSED
+tests/unit/test_explain_agent.py (3 tests) PASSED
+tests/unit/test_explain_facts.py (6 tests) PASSED
 tests/unit/test_generator.py (11 tests) PASSED
 tests/unit/test_llm.py (8 tests) PASSED (1 live smoke deselected)
 tests/unit/test_properties.py (1 test) PASSED
 tests/unit/test_rule_agent.py (4 tests) PASSED
 tests/unit/test_rule_compilers.py (10 tests) PASSED
 tests/unit/test_rule_store.py (4 tests) PASSED
+tests/unit/test_schedule_diff.py (2 tests) PASSED
 tests/unit/test_scheduler.py (11 tests) PASSED
 tests/unit/test_validator.py (13 tests) PASSED
 
-====================== 122 passed, 1 deselected in 23.95s ======================
+====================== 139 passed, 1 deselected in 31.01s ======================
 Ruff: All checks passed!
-Mypy: Success: no issues found in 25 source files
+Mypy: Success: no issues found in 30 source files
 ```
 
-### Phase 4 Plan (Grounded Explainability)
-- [ ] Handcrafted Lateness Benchmark Instances (>= 5 cases with known true root causes):
-  1. `competing_priority`: High-priority order takes the only eligible machine.
-  2. `supply_delay`: Late release time (upstream supply delay).
-  3. `cleanout_gap`: Changeover cleanout gap pushes order past due date.
-  4. `downtime_overlap`: Planned downtime window overlaps operation execution window.
-  5. `routing_cascade`: Cascading precedence delays along the multi-operation routing.
-- [ ] Fact Extraction Engine (`src/planpilot/explain/facts.py`):
-  - Extracts typed, citation-addressable facts from solved schedules: `[F1]`, `[F2]`, etc.
-  - Backtracks tight constraints from late order's final operation along the critical chain to isolate root cause.
-- [ ] Schedule Diff Engine (`src/planpilot/explain/diff.py`):
-  - Compares Schedule A vs Schedule B: classifies movements (earlier/later, machine change, setup delta).
-  - Attributes each movement to root causes (rule added, rush order inserted, downtime inserted).
-- [ ] Citation Verifier (`src/planpilot/explain/verifier.py`):
-  - Deterministic validator checking every sentence cites `[Fn]`, every cited `[Fn]` exists, and numeric claims match fact table.
-- [ ] Explain Agent (`src/planpilot/agents/explain_agent.py`):
-  - Answers "Why is order X late?" and "Why did job Y move?" strictly grounded in extracted facts.
+### Phase 5 Plan (Agentic ERP Data Onboarding)
+- [ ] SAP-style Messy Extract Generator (`src/planpilot/erp/generator.py`):
+  - Generate CSV/Parquet extracts for SAP tables: `CRHD` (work centers), `PLPO` / `PLKO` (routings/operations), `MAST` / `STPO` (BOMs), `AFKO` / `AFPO` (production orders), `MARA` (materials).
+  - Seeded error injection harness: circular BOMs, missing work centers, unit mismatches (min vs hr), orphaned operations, invalid material numbers.
+- [ ] DuckDB In-Memory Profiling Engine (`src/planpilot/erp/profiler.py`):
+  - DuckDB queries over messy extracts to compute summary statistics, cardinality, null fractions, and orphan checks without external database setup.
+- [ ] Deterministic Data Model Mapping & Validation (`src/planpilot/erp/mapper.py`, `src/planpilot/erp/validators.py`):
+  - Deterministic transformations mapping SAP fields to PlanPilot domain models.
+  - Automated detection and diagnostic reporting of data errors (cycles, broken references).
+- [ ] Agentic Onboarding Agent (`src/planpilot/agents/onboarding_agent.py`):
+  - Interactive agent guiding data onboarding, explaining anomalies, proposing column mappings, and certifying readiness before solver ingestion.
+  - Prompt injection protection against malicious strings inside ERP data extracts.
 - [ ] Unit & Integration Tests:
-  - Verify fact extractor correctly traces the root cause on all 5 handcrafted instances.
-  - Verify citation verifier accepts properly cited explanations and rejects uncited, unknown fact IDs, or hallucinated numbers.
+  - Error injector tests verifying all injected defects are caught.
+  - DuckDB profiler tests.
+  - Onboarding agent tool calling and mapping resolution tests.
 
 ### Conventions
 - **src layout**: all code under `src/planpilot/`

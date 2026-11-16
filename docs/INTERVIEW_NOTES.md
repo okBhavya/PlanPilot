@@ -238,4 +238,77 @@ If no other material operations exist on the machine, the sum of presence litera
 
 ---
 
+## Phase 4 — Grounded Explainability & Schedule Diff
+
+### Decision: Fact-Grounded Explainability vs. Direct LLM Reasoning
+
+**Choice:** The LLM NEVER directly inspects raw schedules or infers why a job is late on its own. Instead:
+1. Deterministic algorithms (`FactExtractor`, `ScheduleDiffEngine`) extract a flat list of atomic, citation-addressable facts (`[F1]`, `[F2]`, ...) from the solver's assignments and decision traces.
+2. The LLM is provided ONLY this verified fact table and instructed to synthesize clear business explanations where every sentence cites its source fact.
+3. A deterministic validator (`CitationVerifier`) validates the generated text before returning it to the user.
+
+**Why:**
+- Production APS environments require auditability and trust. If an LLM fabricates a machine breakdown or hallucinated start time, plant operators lose trust immediately.
+- By decoupling fact discovery (deterministic, exact, mathematical) from language synthesis (LLM), we eliminate hallucinations while preserving natural-language fluency.
+
+**Interview Q:** *Why not just prompt GPT-4 with the schedule JSON and ask 'Why is Order 5 late?'*
+**A:** LLMs struggle with multi-hop temporal and graph reasoning over dozens of intervals. When prompted directly on schedule JSON, models hallucinate bottleneck machines, invent fake start times, or fail to trace cascading delays through precedence networks. Grounding the LLM on mathematically extracted facts guarantees 100% causal correctness and numerical fidelity.
+
+---
+
+### Decision: Critical-Chain Backward Tracing Algorithm
+
+**Problem:** Given a late order $O$ with completion $C(O) > due\_date$, what is the true root cause of its lateness?
+
+**Algorithm:**
+1. Identify the late order's terminal operation $op_{final}$.
+2. Inspect the assignment's `tight_constraint` computed by the Phase 2 solver:
+   - If `RELEASE_TIME`: The order's release date was the binding constraint (upstream raw material delay).
+   - If `PREDECESSOR_END`: Preceding operation $op_{prev}$ in the routing delayed $op$. Add $op_{prev}$ to the critical chain and step backward.
+   - If `MACHINE_PREDECESSOR_SETUP`: Another job $op_{mach}$ on the same machine finished immediately prior, plus changeover setup time.
+     - If $op_{mach}$ belonged to a different order, determine if $op_{mach}$ took the machine due to higher priority or earlier arrival (`competing_order`).
+     - If setup time was substantial, flag `changeover_setup`.
+     - Recurse backward to $op_{mach}$ to see what delayed it.
+   - If `DOWNTIME_BOUNDARY`: A planned maintenance window immediately preceded the operation (`downtime_window`).
+3. Terminate when a root bottleneck or release constraint is reached.
+
+**Handcrafted Verification Benchmark Suite:**
+To ensure the backward tracer never misdiagnoses, we established 5 canonical test instances:
+1. `competing_priority`: High-priority order takes the single available machine, forcing lower-priority order to wait.
+2. `supply_delay`: Order release date is set late, meaning the order could not start earlier regardless of capacity.
+3. `cleanout_gap`: Transition between incompatible materials requires a cleanout gap that pushes the job past its due date.
+4. `downtime_overlap`: A scheduled maintenance blackout window blocks the machine during the order's execution window.
+5. `routing_cascade`: Multi-operation routing where each operation runs immediately after its predecessor with zero queue time, but cumulative process time exceeds the due date.
+
+**Complexity:** $O(K)$ where $K$ is the critical chain length ($K \le N \cdot O_{max}$). Executes in $< 1\text{ms}$.
+
+---
+
+### Decision: Schedule Diff & Movement Attribution
+
+**Choice:** `ScheduleDiffEngine` compares baseline Schedule A with updated Schedule B (e.g. after adding a rule or inserting a rush order):
+- Detects assignment movements: $\Delta start$, $\Delta end$, $\Delta machine$, $\Delta setup$.
+- Classifies movement: `EARLIER`, `LATER`, `REASSIGNED`, `UNCHANGED`.
+- Generates high-level comparison facts and overall `KPIDiff` (makespan delta, tardiness delta, on-time percentage delta).
+
+**Interview Q:** *How do you attribute why a job moved in Schedule B?*
+**A:** We examine the delta between schedules in conjunction with the active rule changes and solver decision traces. If the job moved to a different machine, we check if a `ForbidMachine` or `PinToMachine` rule was applied, or if an inserted high-priority job displaced it. If start time increased on the same machine, we check the new predecessor job or inserted downtime window.
+
+---
+
+### Decision: Deterministic CitationVerifier with Anti-Hallucination Guardrails
+
+**Choice:** The `CitationVerifier` enforces three zero-tolerance verification checks on LLM responses:
+1. **Citation Coverage:** Every non-empty sentence must cite at least one fact token (e.g., `[F1]`, `[F2, F3]`).
+2. **Citation Validity:** Every cited fact ID must exist in the provided fact registry.
+3. **Numeric Reconciliation:** Every integer or float mentioned in a sentence must exist in the text or values of the cited facts. If the LLM writes "Order 1 was delayed by 45 minutes", 45 must appear in the cited fact; if it does not, the sentence is rejected for hallucinated metrics.
+
+**Self-Correction Retry Loop:**
+In `ExplainAgent`, if `CitationVerifier.verify()` fails:
+- The exact failure reason (e.g., `"Sentence 2: Number '45' not found in cited facts [F1]"`) is injected into the conversation context as a correction instruction.
+- The agent retries up to `max_retries = 3` times.
+- If all retries fail, the agent falls back to a deterministic, templated summary of the facts, ensuring the user never receives unverified or hallucinated claims.
+
+---
+
 *More sections will be added as phases are completed.*

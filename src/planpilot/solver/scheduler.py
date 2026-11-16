@@ -208,7 +208,9 @@ def solve(
         if routing is None:
             continue
         for op in routing.operations:
-            op_material[(order.id, op.id)] = op.material_id
+            op_material[(order.id, op.id)] = (
+                op.material_id or order.material_id or routing.product_material_id
+            )
 
     # Create downtime intervals per machine
     downtime_intervals: dict[str, list[cp_model.IntervalVar]] = {m.id: [] for m in plant.machines}
