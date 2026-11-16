@@ -139,4 +139,103 @@ model.add(ov_a.start >= ov_b.end + setup_ba).only_enforce_if(a_before_b.negated(
 
 ---
 
+## Phase 3 — Rule DSL & Mathematical Constraint Compilers
+
+### Decision: Pydantic v2 Discriminated Union for Scheduling Rules
+
+**Choice:** The Rule DSL uses a discriminated union `Rule = Annotated[Union[ForbidSequence, ...], Field(discriminator="type")]` with an enum discriminator `RuleType`.
+
+**Why:**
+1. **Type Safety & Serialization:** Discriminated unions allow automatic polymorphic deserialization from JSON/dict in Pydantic v2 with zero runtime guesswork.
+2. **Schema Generation for LLMs:** Pydantic can emit standard JSON Schema with `anyOf` and discriminator tags, making tool definitions for LLMs crystal clear and deterministic.
+3. **Immutability & Hashability:** Rules are frozen models, making them safe to store, diff, and cache.
+
+**Alternatives considered:**
+- Class inheritance with manual type field: Prone to missing fields and requires custom deserialization code.
+- Dynamic string DSL (e.g., custom grammar parsed via Lark or ANTLR): High implementation and maintenance complexity, poor error messages for LLMs, and lack of typed integration with FastAPI.
+
+---
+
+### Decision: Exact Formulation of Adjacency for `ForbidSequence`
+
+**Challenge:** In manufacturing, "never run aluminium immediately after titanium on Machine 4 without a 30m cleanout" applies to **adjacent** transitions. If another job (e.g. Steel) runs between Titanium and Aluminium, or if Aluminium runs before Titanium, the rule is not violated.
+
+**Mathematical Formulation in CP-SAT:**
+For any pair $(A, B)$ on machine $m$ where material of $A$ is `from_material` and material of $B$ is `to_material`:
+A violation occurs if and only if:
+$$start_B \ge end_A \quad \land \quad start_B < end_A + cleanout \quad \land \quad \forall C \notin \{A, B\}: \neg (end_A \le start_C \land end_C \le start_B)$$
+
+By De Morgan's laws, the valid condition (negation of violation) when both $A$ and $B$ are scheduled on machine $m$ is:
+$$\underbrace{(start_A \ge end_B)}_{\text{Option 1: } B \text{ runs before } A} \lor \underbrace{(start_B \ge end_A + cleanout)}_{\text{Option 2: cleanout gap met (if } cleanout > 0)} \lor \bigvee_{C \notin \{A, B\}} \underbrace{(start_C \ge end_A \land start_B \ge end_C)}_{\text{Option 3: } C \text{ intervenes between } A \text{ and } B}$$
+
+In CP-SAT, this is implemented cleanly without Big-M:
+- Option 1 is reified via boolean variable $b\_before\_a$
+- Option 2 is reified via boolean variable $gap\_ok$
+- Option 3 creates a boolean variable $c\_between$ for each third operation $C$ on the machine
+- The disjunction is enforced: `model.add_bool_or([b_before_a, gap_ok, ...c_between]).only_enforce_if(pres_a, pres_b)`.
+
+**Interview Q:** *Why not use Big-M for sequencing constraints?*
+**A:** Big-M formulations weaken the continuous LP relaxation in MIP solvers and degrade propagation strength in CP-SAT solvers because the domain bounds are inflated by large constants $M$. Using boolean indicator variables with native half-reified constraints (`only_enforce_if`) keeps variable domains tight and allows CP-SAT's SAT engine to prune domains directly during unit propagation.
+
+---
+
+### Decision: Subsegment Bounding for `BatchTogether`
+
+**Choice:** For a batch of operations $S$ on machine $m$:
+1. Compute the batch span: $min\_batch\_start = \min_{u \in S} start_u$ and $max\_batch\_end = \max_{u \in S} end_u$ using CP-SAT's native `add_min_equality` and `add_max_equality`.
+2. For every outside operation $k \notin S$ on machine $m$, enforce disjunctive separation:
+$$(end_k \le min\_batch\_start) \lor (start_k \ge max\_batch\_end)$$
+
+**Complexity:** $O(|S| + |outside|)$ constraints. Extremely tight propagation.
+
+---
+
+### Decision: Combinatorial Invariant for `MaxConsecutiveRuns`
+
+**Choice:** To prevent more than $k = max\_runs$ consecutive jobs of material family $F$ on machine $m$:
+For every subset of size $k + 1$ matching operations on machine $m$:
+If all $k + 1$ operations are present on machine $m$, there must exist at least one operation $v$ of a **different** material family scheduled between the earliest and latest operation of the subset.
+If no other material operations exist on the machine, the sum of presence literals of family $F$ is constrained to $\le max\_runs$.
+
+---
+
+## Phase 3 — Five-Stage Deterministic Validation Pipeline
+
+### Decision: Ordered Fast-Fail Validation Pipeline
+
+**Choice:** Candidate rules must pass 5 sequential validation stages:
+1. **Stage 1 (Schema):** Pydantic structural validation (correct fields, valid types, discriminator matching).
+2. **Stage 2 (Entity Existence & Resolution):** Fuzzy matching and verification against plant entities (`MachineId`, `OrderId`, `MaterialFamily`).
+3. **Stage 3 (Semantic Checks):** Invariant checks (release time vs due date, downtime boundaries vs plant horizon, non-negative setup times).
+4. **Stage 4 (Conflict Detection):** Static conflict checks against currently active rules:
+   - Direct contradiction: Pin vs Forbid on same (order, op, machine).
+   - Incompatible pins: Pinning op to machine $M_1$ when already pinned to $M_2$.
+   - Cycle detection: DFS cycle check on the directed graph of `OrderPrecedence` rules ($O(V + E)$).
+5. **Stage 5 (Feasibility Check):** Solves a fast trial schedule with a short time limit (e.g. 3.0s) and assumption-based conflict core extraction.
+
+**Why:** Staged fast-fail architecture maximizes responsiveness and minimizes solver overhead. Microsecond checks (Schema, Entity, Semantic, Conflict) catch 95% of invalid or contradictory rules before touching CP-SAT. The solver is only invoked in Stage 5 to verify mathematical feasibility.
+
+**Interview Q:** *How do you detect cycles in OrderPrecedence rules?*
+**A:** We construct a directed graph where orders are vertices and precedence rules are directed edges $(u, v)$. When a new rule $(A, B)$ is proposed, we run a Depth-First Search (DFS) starting from $B$. If $A$ is reachable from $B$, adding $(A, B)$ would complete a directed cycle, which is mathematically impossible for scheduling. We catch this in $O(V + E)$ time and return a human-readable conflict error immediately without running the solver.
+
+---
+
+## Phase 3 — LLM Provider Abstraction & Architecture
+
+### Decision: Multi-Provider Abstraction with Pluggable Endpoints
+
+**Choice:** `LLMClient` supports `openai`, `anthropic`, and `openai_compatible` (Ollama, vLLM, Groq). All model names, providers, and API keys are read from environment variables with sensible defaults.
+
+### Decision: SHA256 Disk Response Cache
+
+**Choice:** An on-disk response cache (`DiskCache`) hashes the normalized input payload (model + messages + tools + temperature) with SHA256:
+- **Cache Hit:** Returns cached tool calls, content, and token counts with `latency=0.0s` and `cost=0.0`.
+- **Why:** Essential for deterministic evaluations, regression testing, and CI cost containment. Evals run in seconds without calling external LLM APIs.
+
+### Decision: Data/Instruction Segregation (Prompt Injection Defense)
+
+**Choice:** All user inputs and natural-language rules are encapsulated in XML data tags (`<USER_SCHEDULING_RULE>...</USER_SCHEDULING_RULE>`). The system prompt instructs the LLM that content inside these tags is purely data to be extracted, never instructions to be followed.
+
+---
+
 *More sections will be added as phases are completed.*

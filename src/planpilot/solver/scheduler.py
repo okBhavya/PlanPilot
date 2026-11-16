@@ -25,6 +25,8 @@ from planpilot.domain.models import (
     SolverStatus,
     TightConstraint,
 )
+from planpilot.rules.compilers import CompilerContext, compile_rule
+from planpilot.rules.dsl import Rule
 from planpilot.solver.infeasibility import diagnose_infeasibility
 
 
@@ -82,6 +84,7 @@ def _map_solver_status(status: cp_model.CpSolverStatus | int) -> SolverStatus:
 def solve(
     plant: Plant,
     objective: ObjectiveType = ObjectiveType.MAKESPAN,
+    rules: list[Rule] | None = None,
     time_limit_seconds: float = 60.0,
     num_workers: int = 8,
     diagnose_if_infeasible: bool = True,
@@ -377,7 +380,41 @@ def solve(
         model.minimize(big_m * makespan + total_tardiness_lex)
 
     # -----------------------------------------------------------------------
-    # 5. Solve
+    # 5. Compile Domain Rules
+    # -----------------------------------------------------------------------
+    if rules:
+        ctx = CompilerContext(
+            plant=plant,
+            model=model,
+            op_vars={
+                k: (ov.start, ov.end, ov.presence, ov.processing_time) for k, ov in op_vars.items()
+            },
+            op_alternatives={
+                k: [(ov.machine_id, ov.start, ov.end, ov.presence) for ov in alts]
+                for k, alts in op_alternatives.items()
+            },
+            machine_ops={
+                m: [
+                    (
+                        ov.order_id,
+                        ov.operation_id,
+                        ov.start,
+                        ov.end,
+                        ov.presence,
+                        ov.processing_time,
+                    )
+                    for ov in ovs
+                ]
+                for m, ovs in machine_ops.items()
+            },
+            order_op_sequences=order_op_sequences,
+            horizon=horizon,
+        )
+        for r in rules:
+            compile_rule(r, ctx)
+
+    # -----------------------------------------------------------------------
+    # 6. Solve
     # -----------------------------------------------------------------------
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = time_limit_seconds
