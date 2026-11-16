@@ -1,6 +1,6 @@
 # PlanPilot Progress
 
-## Current Status: Phase 4 — Grounded Explainability ✅ (Moving to Phase 5)
+## Current Status: Phase 5 — Agentic ERP Data Onboarding ✅ (Moving to Phase 6)
 
 ### Completed
 
@@ -121,22 +121,86 @@ Ruff: All checks passed!
 Mypy: Success: no issues found in 30 source files
 ```
 
-### Phase 5 Plan (Agentic ERP Data Onboarding)
-- [ ] SAP-style Messy Extract Generator (`src/planpilot/erp/generator.py`):
-  - Generate CSV/Parquet extracts for SAP tables: `CRHD` (work centers), `PLPO` / `PLKO` (routings/operations), `MAST` / `STPO` (BOMs), `AFKO` / `AFPO` (production orders), `MARA` (materials).
-  - Seeded error injection harness: circular BOMs, missing work centers, unit mismatches (min vs hr), orphaned operations, invalid material numbers.
-- [ ] DuckDB In-Memory Profiling Engine (`src/planpilot/erp/profiler.py`):
-  - DuckDB queries over messy extracts to compute summary statistics, cardinality, null fractions, and orphan checks without external database setup.
-- [ ] Deterministic Data Model Mapping & Validation (`src/planpilot/erp/mapper.py`, `src/planpilot/erp/validators.py`):
-  - Deterministic transformations mapping SAP fields to PlanPilot domain models.
-  - Automated detection and diagnostic reporting of data errors (cycles, broken references).
-- [ ] Agentic Onboarding Agent (`src/planpilot/agents/onboarding_agent.py`):
-  - Interactive agent guiding data onboarding, explaining anomalies, proposing column mappings, and certifying readiness before solver ingestion.
-  - Prompt injection protection against malicious strings inside ERP data extracts.
-- [ ] Unit & Integration Tests:
-  - Error injector tests verifying all injected defects are caught.
-  - DuckDB profiler tests.
-  - Onboarding agent tool calling and mapping resolution tests.
+#### Phase 5 — Agentic ERP Data Onboarding
+- [x] **SAP-style & Legacy Extract Generators** (`src/planpilot/erp/generator.py`):
+  - Generates realistic SAP tables: `CRHD` (work centers), `MARA` (materials), `PLPO` (routings/operations), `STPO` (BOMs), `AFKO` (orders).
+  - Generates non-SAP legacy variant with alternative headers (`stations`, `items`, `routings`, `boms`, `work_orders`).
+  - Fully deterministic with configurable seeds.
+- [x] **Seeded Error Injector** (`src/planpilot/erp/injector.py`):
+  - Injects all 9 specified defect types with ground truth labels:
+    `DANGLING_WORK_CENTER`, `CIRCULAR_BOM`, `ZERO_NEGATIVE_DURATION`, `UNIT_MISMATCH`, `DUPLICATE_KEY`, `ORPHAN_COMPONENT`, `MIXED_DATE_FORMAT`, `WHITESPACE_CASE_INCONSISTENT`, `MISSING_MANDATORY_FIELD`.
+- [x] **DuckDB In-Memory Profiling Engine** (`src/planpilot/erp/profiler.py`):
+  - In-memory DuckDB zero-copy DataFrame profiling.
+  - Computes row counts, null rates, cardinality, min/max, samples, and candidate primary keys.
+- [x] **Deterministic Validator** (`src/planpilot/erp/validators.py`):
+  - High-speed SQL checks + 3-color DFS graph cycle detection on BOMs.
+  - Categorizes issues by severity (`CRITICAL`, `WARNING`, `INFO`).
+  - Computes precision, recall, and F1 score against ground truth ($P \ge 0.85, R \ge 0.85, F_1 \ge 0.85$).
+- [x] **ERP to Plant Domain Mapper** (`src/planpilot/erp/mapper.py`):
+  - Maps SAP and legacy tables into valid `Plant` domain instances.
+  - Normalizes durations to discrete integer minutes for CP-SAT.
+  - Passes `plant.validate_referential_integrity()` and solves to optimal with CP-SAT.
+- [x] **Agentic Onboarding Agent** (`src/planpilot/agents/onboarding_agent.py`):
+  - Interactive agent with tools: `inspect_tables`, `sample_table`, `propose_mapping`, `run_validation`, `generate_readiness_report`.
+  - Strict prompt-injection defense encapsulating raw CSV contents inside `<ERP_DATA>` tags.
+  - Synthesizes executive Go-Live Readiness Reports.
+- [x] **Comprehensive Test Verification**:
+  - 14 new unit tests across generator, injector, profiler, validators, mapper, and agent.
+  - Total 153 tests passing in 40.27s. Ruff clean, mypy strict clean (37 source files checked with 0 errors).
+
+### Phase 5 Hard Verification Gate Output
+```
+tests/unit/test_benchmarks.py (23 tests) PASSED
+tests/unit/test_citation_verifier.py (6 tests) PASSED
+tests/unit/test_domain.py (37 tests) PASSED
+tests/unit/test_erp_generator.py (3 tests) PASSED
+tests/unit/test_erp_injector.py (1 test) PASSED
+tests/unit/test_erp_mapper.py (2 tests) PASSED
+tests/unit/test_erp_profiler.py (1 test) PASSED
+tests/unit/test_erp_validators.py (5 tests) PASSED
+tests/unit/test_explain_agent.py (3 tests) PASSED
+tests/unit/test_explain_facts.py (6 tests) PASSED
+tests/unit/test_generator.py (11 tests) PASSED
+tests/unit/test_llm.py (8 tests) PASSED (1 live smoke deselected)
+tests/unit/test_onboarding_agent.py (2 tests) PASSED
+tests/unit/test_properties.py (1 test) PASSED
+tests/unit/test_rule_agent.py (4 tests) PASSED
+tests/unit/test_rule_compilers.py (10 tests) PASSED
+tests/unit/test_rule_store.py (4 tests) PASSED
+tests/unit/test_schedule_diff.py (2 tests) PASSED
+tests/unit/test_scheduler.py (11 tests) PASSED
+tests/unit/test_validator.py (13 tests) PASSED
+
+====================== 153 passed, 1 deselected in 40.27s ======================
+Ruff: All checks passed!
+Mypy: Success: no issues found in 37 source files
+```
+
+### Phase 6 Plan (Scenario Comparison + API + Worker)
+- [ ] Scenario Comparison Agent (`src/planpilot/agents/scenario_agent.py`):
+  - Given Schedule A and Schedule B, deterministically calculates KPI deltas (throughput, on-time delivery %, makespan, machine utilization).
+  - Formulates weighted utility score with configurable/state-level trade-off weights (e.g. prioritize due dates over setup efficiency).
+  - LLM synthesizes clear executive recommendation citing exact delta values.
+- [ ] JobQueue Protocol & Async Worker (`src/planpilot/queue/`, `src/planpilot/worker/`):
+  - Minimal swappable `JobQueue` protocol (`enqueue`, `get_status`, `get_result`).
+  - In-process / arq queue adapter for async CP-SAT solves.
+- [ ] Database & Persistence (`src/planpilot/db/`):
+  - SQLAlchemy 2.0 async models for `Plant`, `Schedule`, `Rule`, `Job`, `LLMTrace`.
+  - SQLite default with PostgreSQL support.
+- [ ] Production FastAPI Application (`src/planpilot/api/`):
+  - Endpoints:
+    - `POST /plants`: upload/create plant
+    - `POST /orders`: add/update orders
+    - `POST /rules`: natural language rule -> validated DSL
+    - `POST /schedules`: submit async solve job
+    - `GET /jobs/{id}`: poll solve job status/result
+    - `POST /explain`: why is order late? / why did job move?
+    - `POST /scenarios/compare`: compare two schedules with AI recommendation
+    - `POST /onboarding`: upload messy CSVs -> readiness report + mapped plant
+    - `GET /health`: system health check
+  - API Key authentication header, request size limits, CORS, structured OpenAPI documentation.
+- [ ] Integration Tests:
+  - Full API integration tests using httpx `TestClient`.
 
 ### Conventions
 - **src layout**: all code under `src/planpilot/`
