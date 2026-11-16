@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "1420626f07f8539f306b5570ac7f5875920468b363d8275c2f05d42c043e358d",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "Clarification needed: please provide specific machines or order IDs.",
+    "tool_calls": [
+      {
+        "id": "call_R58_clarify",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "Please specify the missing parameters (machine, orders, or duration) for: 'Make sure the priority order finishes quickly'."
+        }
+      }
+    ],
+    "prompt_tokens": 327,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 327,
+  "completion_tokens": 35
+}

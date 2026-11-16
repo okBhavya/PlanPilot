@@ -1,0 +1,7 @@
+{
+  "case_id": "case_16",
+  "format": "legacy",
+  "num_errors": 1,
+  "target_defect": "orphan_component",
+  "description": "Single defect orphan_component in LEGACY extract"
+}

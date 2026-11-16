@@ -1,0 +1,29 @@
+[
+  {
+    "error_type": "dangling_work_center",
+    "table": "PLPO",
+    "row_idx": 0,
+    "column": "ARBPL",
+    "details": "Routing references non-existent work center 'WC-GHOST-999'",
+    "expected_value": "WC-MILL-01",
+    "injected_value": "WC-GHOST-999"
+  },
+  {
+    "error_type": "circular_bom",
+    "table": "STPO",
+    "row_idx": 10,
+    "column": "IDNRK",
+    "details": "Circular dependency injected: MAT-COMP-001 -> MAT-PROD-001 -> MAT-COMP-001",
+    "expected_value": null,
+    "injected_value": "MAT-PROD-001"
+  },
+  {
+    "error_type": "zero_negative_duration",
+    "table": "PLPO",
+    "row_idx": 1,
+    "column": "VGW02",
+    "details": "Operation run time is negative (-15.0)",
+    "expected_value": 30.0,
+    "injected_value": -15.0
+  }
+]

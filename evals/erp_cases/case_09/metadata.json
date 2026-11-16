@@ -1,0 +1,7 @@
+{
+  "case_id": "case_09",
+  "format": "sap",
+  "num_errors": 1,
+  "target_defect": "zero_negative_duration",
+  "description": "Single defect zero_negative_duration in SAP extract"
+}

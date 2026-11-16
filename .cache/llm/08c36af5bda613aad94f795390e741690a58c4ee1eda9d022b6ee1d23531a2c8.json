@@ -1,0 +1,25 @@
+{
+  "prompt_hash": "08c36af5bda613aad94f795390e741690a58c4ee1eda9d022b6ee1d23531a2c8",
+  "model": "claude-3-5-sonnet-20241022",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R39_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "max_consecutive_runs",
+            "machine_id": "M1",
+            "material_family": "steel",
+            "max_runs": 3
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 332,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 332,
+  "completion_tokens": 35
+}

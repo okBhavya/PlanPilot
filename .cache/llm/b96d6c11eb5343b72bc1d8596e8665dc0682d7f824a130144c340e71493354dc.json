@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "b96d6c11eb5343b72bc1d8596e8665dc0682d7f824a130144c340e71493354dc",
+  "model": "llama3",
+  "response_data": {
+    "content": "Clarification needed: please provide specific machines or order IDs.",
+    "tool_calls": [
+      {
+        "id": "call_R56_clarify",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "Please specify the missing parameters (machine, orders, or duration) for: 'Never run steel on the machine without a cleanout'."
+        }
+      }
+    ],
+    "prompt_tokens": 329,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 329,
+  "completion_tokens": 35
+}

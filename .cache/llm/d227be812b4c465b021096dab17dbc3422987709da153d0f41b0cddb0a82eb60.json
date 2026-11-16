@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "d227be812b4c465b021096dab17dbc3422987709da153d0f41b0cddb0a82eb60",
+  "model": "claude-3-5-sonnet-20241022",
+  "response_data": {
+    "content": "This rule contains mutually conflicting constraints.",
+    "tool_calls": [
+      {
+        "id": "call_R64_reject",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "The rule 'Pin order ORD-999 to nonexistent machine GHOST_99' appears contradictory or semantically invalid. Please verify."
+        }
+      }
+    ],
+    "prompt_tokens": 327,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 327,
+  "completion_tokens": 35
+}

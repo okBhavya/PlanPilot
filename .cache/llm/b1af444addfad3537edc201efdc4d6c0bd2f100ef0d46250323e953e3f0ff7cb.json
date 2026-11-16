@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "b1af444addfad3537edc201efdc4d6c0bd2f100ef0d46250323e953e3f0ff7cb",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R23_clarify",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "Could you clarify the parameters for: force ordr ORD-03 op OP10 onto machne M3?"
+        }
+      }
+    ],
+    "prompt_tokens": 328,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 328,
+  "completion_tokens": 35
+}

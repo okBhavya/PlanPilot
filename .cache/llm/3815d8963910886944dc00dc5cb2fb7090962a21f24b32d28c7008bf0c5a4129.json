@@ -1,0 +1,28 @@
+{
+  "prompt_hash": "3815d8963910886944dc00dc5cb2fb7090962a21f24b32d28c7008bf0c5a4129",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R52_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "batch_together",
+            "order_ids": [
+              "ORD-03",
+              "ORD-04"
+            ],
+            "machine_id": "M2",
+            "max_span_min": 120
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 331,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 331,
+  "completion_tokens": 35
+}

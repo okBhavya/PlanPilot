@@ -1,0 +1,25 @@
+{
+  "prompt_hash": "cf313a1030593c728c8c0f3c7bf86a32a1b4a853ab4254e1fe46d6dd861ac850",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R26_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "pin_to_machine",
+            "order_id": "ORD-06",
+            "operation_id": "OP20",
+            "machine_id": "M2"
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 327,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 327,
+  "completion_tokens": 35
+}

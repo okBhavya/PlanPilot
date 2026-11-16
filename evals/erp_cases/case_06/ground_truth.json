@@ -1,0 +1,11 @@
+[
+  {
+    "error_type": "dangling_work_center",
+    "table": "routings",
+    "row_idx": 0,
+    "column": "station_id",
+    "details": "Routing references non-existent work center 'WC-GHOST-999'",
+    "expected_value": "WC-MILL-01",
+    "injected_value": "WC-GHOST-999"
+  }
+]

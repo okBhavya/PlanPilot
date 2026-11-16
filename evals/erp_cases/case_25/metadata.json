@@ -1,0 +1,6 @@
+{
+  "case_id": "case_25",
+  "format": "sap",
+  "num_errors": 4,
+  "description": "SAP multi-defect: duplicate key + mixed dates + whitespace + missing fields"
+}

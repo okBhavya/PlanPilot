@@ -1,0 +1,25 @@
+{
+  "prompt_hash": "8f9b959c79520872c8632614a374453f233fcac70e93c4b6e14ca5019ffbbdc3",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R22_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "pin_to_machine",
+            "order_id": "ORD-02",
+            "operation_id": "OP20",
+            "machine_id": "M2"
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 327,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 327,
+  "completion_tokens": 35
+}

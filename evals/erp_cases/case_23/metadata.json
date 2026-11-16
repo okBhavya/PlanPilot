@@ -1,0 +1,6 @@
+{
+  "case_id": "case_23",
+  "format": "sap",
+  "num_errors": 3,
+  "description": "SAP multi-defect: dangling WC + circular BOM + unit mismatch"
+}

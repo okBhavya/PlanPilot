@@ -1,0 +1,25 @@
+{
+  "prompt_hash": "0a5e09742f42a7256743730d5c65441697629c4f695d43b0a680e83561a12e68",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R42_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "max_consecutive_runs",
+            "machine_id": "M4",
+            "material_family": "titanium",
+            "max_runs": 2
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 329,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 329,
+  "completion_tokens": 35
+}

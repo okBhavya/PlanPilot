@@ -1,0 +1,25 @@
+{
+  "prompt_hash": "70b3a3aa9165042e48dc9ff8c3eecf0e088c9195f1dce79a1a5a409cdbf2dcc8",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R32_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "forbid_machine",
+            "order_id": "ORD-06",
+            "operation_id": "OP30",
+            "machine_id": "M2"
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 328,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 328,
+  "completion_tokens": 35
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "error_type": "dangling_work_center",
+    "table": "routings",
+    "row_idx": 0,
+    "column": "station_id",
+    "details": "Routing references non-existent work center 'WC-GHOST-999'",
+    "expected_value": "WC-MILL-01",
+    "injected_value": "WC-GHOST-999"
+  },
+  {
+    "error_type": "circular_bom",
+    "table": "boms",
+    "row_idx": 10,
+    "column": "child_item",
+    "details": "Circular dependency injected: MAT-COMP-001 -> MAT-PROD-001 -> MAT-COMP-001",
+    "expected_value": null,
+    "injected_value": "MAT-PROD-001"
+  },
+  {
+    "error_type": "zero_negative_duration",
+    "table": "routings",
+    "row_idx": 1,
+    "column": "run_mins",
+    "details": "Operation run time is negative (-15.0)",
+    "expected_value": 45.0,
+    "injected_value": -15.0
+  },
+  {
+    "error_type": "unit_mismatch",
+    "table": "routings",
+    "row_idx": 2,
+    "column": "run_uom",
+    "details": "Invalid duration unit 'KILOGRAMS' (expected MIN, HR, SEC)",
+    "expected_value": "MIN",
+    "injected_value": "KILOGRAMS"
+  }
+]

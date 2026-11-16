@@ -1,0 +1,26 @@
+{
+  "prompt_hash": "efde4d60eca6564cb543b3d8cfd5a753e8bdd59fa111fc0fe3702bcece3c9540",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R19_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "machine_unavailable",
+            "machine_id": "M1",
+            "start": 60,
+            "end": 120,
+            "reason": "maintenance blackout"
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 330,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 330,
+  "completion_tokens": 35
+}

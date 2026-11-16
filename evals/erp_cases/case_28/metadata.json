@@ -1,0 +1,6 @@
+{
+  "case_id": "case_28",
+  "format": "legacy",
+  "num_errors": 5,
+  "description": "Legacy multi-defect: 5 concurrent errors across stations, routings, boms, orders"
+}

@@ -1,0 +1,24 @@
+{
+  "prompt_hash": "d0fd9a548fcbcc1b1d5cb93051414cb4edc3aff4ae4791d6127b981553e63320",
+  "model": "claude-3-5-sonnet-20241022",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R45_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "hard_due_date",
+            "order_id": "ORD-01",
+            "deadline": 250
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 331,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 331,
+  "completion_tokens": 35
+}

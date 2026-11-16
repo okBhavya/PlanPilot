@@ -1,0 +1,11 @@
+[
+  {
+    "error_type": "unit_mismatch",
+    "table": "PLPO",
+    "row_idx": 2,
+    "column": "VGE02",
+    "details": "Invalid duration unit 'KILOGRAMS' (expected MIN, HR, SEC)",
+    "expected_value": "MIN",
+    "injected_value": "KILOGRAMS"
+  }
+]

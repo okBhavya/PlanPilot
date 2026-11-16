@@ -1,0 +1,7 @@
+{
+  "case_id": "case_06",
+  "format": "legacy",
+  "num_errors": 1,
+  "target_defect": "dangling_work_center",
+  "description": "Single defect dangling_work_center in LEGACY extract"
+}

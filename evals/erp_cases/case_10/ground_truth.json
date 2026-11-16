@@ -1,0 +1,11 @@
+[
+  {
+    "error_type": "zero_negative_duration",
+    "table": "routings",
+    "row_idx": 1,
+    "column": "run_mins",
+    "details": "Operation run time is negative (-15.0)",
+    "expected_value": 90.0,
+    "injected_value": -15.0
+  }
+]

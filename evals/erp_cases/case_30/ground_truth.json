@@ -1,0 +1,93 @@
+[
+  {
+    "error_type": "dangling_work_center",
+    "table": "routings",
+    "row_idx": 0,
+    "column": "station_id",
+    "details": "Routing references non-existent work center 'WC-GHOST-999'",
+    "expected_value": "WC-MILL-01",
+    "injected_value": "WC-GHOST-999"
+  },
+  {
+    "error_type": "circular_bom",
+    "table": "boms",
+    "row_idx": 10,
+    "column": "child_item",
+    "details": "Circular dependency injected: MAT-COMP-001 -> MAT-PROD-001 -> MAT-COMP-001",
+    "expected_value": null,
+    "injected_value": "MAT-PROD-001"
+  },
+  {
+    "error_type": "zero_negative_duration",
+    "table": "routings",
+    "row_idx": 1,
+    "column": "run_mins",
+    "details": "Operation run time is negative (-15.0)",
+    "expected_value": 30.0,
+    "injected_value": -15.0
+  },
+  {
+    "error_type": "unit_mismatch",
+    "table": "routings",
+    "row_idx": 2,
+    "column": "run_uom",
+    "details": "Invalid duration unit 'KILOGRAMS' (expected MIN, HR, SEC)",
+    "expected_value": "MIN",
+    "injected_value": "KILOGRAMS"
+  },
+  {
+    "error_type": "duplicate_key",
+    "table": "routings",
+    "row_idx": 12,
+    "column": "routing_id, op_seq",
+    "details": "Duplicate routing step key",
+    "expected_value": null,
+    "injected_value": {
+      "routing_id": "ROUT-0002",
+      "product_code": "MAT-PROD-002",
+      "op_seq": "0020",
+      "station_id": "WC-LATHE-02",
+      "setup_mins": 45.0,
+      "setup_uom": "MIN",
+      "run_mins": 60.0,
+      "run_uom": "MIN",
+      "op_description": "Operation 0020 for MAT-PROD-002"
+    }
+  },
+  {
+    "error_type": "orphan_component",
+    "table": "boms",
+    "row_idx": 1,
+    "column": "child_item",
+    "details": "BOM references non-existent material 'MAT-ORPHAN-NONEXISTENT'",
+    "expected_value": "MAT-COMP-002",
+    "injected_value": "MAT-ORPHAN-NONEXISTENT"
+  },
+  {
+    "error_type": "mixed_date_format",
+    "table": "work_orders",
+    "row_idx": 0,
+    "column": "release_date",
+    "details": "Date '11/25/2026' does not follow ISO-8601 (YYYY-MM-DD)",
+    "expected_value": "2026-11-01",
+    "injected_value": "11/25/2026"
+  },
+  {
+    "error_type": "whitespace_case_inconsistent",
+    "table": "items",
+    "row_idx": 0,
+    "column": "item_code",
+    "details": "Material ID contains untrimmed whitespace and inconsistent casing",
+    "expected_value": "MAT-PROD-001",
+    "injected_value": "  mat-prod-001  "
+  },
+  {
+    "error_type": "missing_mandatory_field",
+    "table": "stations",
+    "row_idx": 7,
+    "column": "station_id",
+    "details": "Work center ID is blank or null",
+    "expected_value": "WC-LATHE-08",
+    "injected_value": ""
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "8efc998fb9b3db1a4a36031c5a6b83057604ed69c57611b3e3b4a81540719d32",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "This rule contains mutually conflicting constraints.",
+    "tool_calls": [
+      {
+        "id": "call_R62_reject",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "The rule 'Machine M1 is unavailable from minute 300 to minute 100' appears contradictory or semantically invalid. Please verify."
+        }
+      }
+    ],
+    "prompt_tokens": 330,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 330,
+  "completion_tokens": 35
+}

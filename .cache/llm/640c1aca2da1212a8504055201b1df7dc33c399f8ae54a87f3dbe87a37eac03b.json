@@ -1,0 +1,25 @@
+{
+  "prompt_hash": "640c1aca2da1212a8504055201b1df7dc33c399f8ae54a87f3dbe87a37eac03b",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R39_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "max_consecutive_runs",
+            "machine_id": "M1",
+            "material_family": "steel",
+            "max_runs": 3
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 332,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 332,
+  "completion_tokens": 35
+}

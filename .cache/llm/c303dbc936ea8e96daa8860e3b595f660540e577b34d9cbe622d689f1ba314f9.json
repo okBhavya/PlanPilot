@@ -1,0 +1,25 @@
+{
+  "prompt_hash": "c303dbc936ea8e96daa8860e3b595f660540e577b34d9cbe622d689f1ba314f9",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R37_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "order_precedence",
+            "before_order_id": "ORD-02",
+            "after_order_id": "ORD-05",
+            "min_gap_min": 20
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 329,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 329,
+  "completion_tokens": 35
+}

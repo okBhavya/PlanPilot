@@ -1,0 +1,7 @@
+{
+  "case_id": "case_12",
+  "format": "legacy",
+  "num_errors": 1,
+  "target_defect": "unit_mismatch",
+  "description": "Single defect unit_mismatch in LEGACY extract"
+}

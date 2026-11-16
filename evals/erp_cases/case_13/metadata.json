@@ -1,0 +1,7 @@
+{
+  "case_id": "case_13",
+  "format": "sap",
+  "num_errors": 1,
+  "target_defect": "duplicate_key",
+  "description": "Single defect duplicate_key in SAP extract"
+}

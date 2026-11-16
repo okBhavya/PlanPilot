@@ -1,0 +1,11 @@
+[
+  {
+    "error_type": "dangling_work_center",
+    "table": "PLPO",
+    "row_idx": 0,
+    "column": "ARBPL",
+    "details": "Routing references non-existent work center 'WC-GHOST-999'",
+    "expected_value": "WC-MILL-01",
+    "injected_value": "WC-GHOST-999"
+  }
+]

@@ -1,0 +1,6 @@
+{
+  "case_id": "case_29",
+  "format": "sap",
+  "num_errors": 9,
+  "description": "SAP full stress test: all 9 defect types present simultaneously"
+}

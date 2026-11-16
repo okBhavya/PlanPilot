@@ -1,0 +1,11 @@
+[
+  {
+    "error_type": "missing_mandatory_field",
+    "table": "CRHD",
+    "row_idx": 3,
+    "column": "ARBPL",
+    "details": "Work center ID is blank or null",
+    "expected_value": "WC-INSPECT-04",
+    "injected_value": ""
+  }
+]

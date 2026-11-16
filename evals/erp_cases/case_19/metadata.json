@@ -1,0 +1,7 @@
+{
+  "case_id": "case_19",
+  "format": "sap",
+  "num_errors": 1,
+  "target_defect": "whitespace_case_inconsistent",
+  "description": "Single defect whitespace_case_inconsistent in SAP extract"
+}

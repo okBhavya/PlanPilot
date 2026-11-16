@@ -21,6 +21,14 @@ class ErrorInjector:
         self, datasets: dict[str, pd.DataFrame]
     ) -> tuple[dict[str, pd.DataFrame], list[InjectedError]]:
         """Inject one of each error type into the provided dataset."""
+        return self.inject_errors(datasets, list(InjectedErrorType))
+
+    def inject_errors(
+        self,
+        datasets: dict[str, pd.DataFrame],
+        error_types: list[InjectedErrorType],
+    ) -> tuple[dict[str, pd.DataFrame], list[InjectedError]]:
+        """Inject specified error types into the dataset with exact ground truth."""
         corrupted = {name: df.copy(deep=True) for name, df in datasets.items()}
         ground_truth: list[InjectedError] = []
 
@@ -32,7 +40,7 @@ class ErrorInjector:
         order_table = "AFKO" if is_sap else "work_orders"
 
         # 1. Dangling Work Center
-        if routing_table in corrupted:
+        if InjectedErrorType.DANGLING_WORK_CENTER in error_types and routing_table in corrupted:
             df = corrupted[routing_table]
             row_idx = 0
             col = "ARBPL" if is_sap else "station_id"
@@ -52,7 +60,7 @@ class ErrorInjector:
             )
 
         # 2. Circular BOM
-        if bom_table in corrupted:
+        if InjectedErrorType.CIRCULAR_BOM in error_types and bom_table in corrupted:
             df = corrupted[bom_table]
             p_col = "MATNR" if is_sap else "parent_item"
             c_col = "IDNRK" if is_sap else "child_item"
@@ -83,7 +91,7 @@ class ErrorInjector:
             )
 
         # 3. Zero / Negative Duration
-        if routing_table in corrupted:
+        if InjectedErrorType.ZERO_NEGATIVE_DURATION in error_types and routing_table in corrupted:
             df = corrupted[routing_table]
             row_idx = 1 if len(df) > 1 else 0
             col = "VGW02" if is_sap else "run_mins"
@@ -103,7 +111,7 @@ class ErrorInjector:
             )
 
         # 4. Unit Mismatch
-        if routing_table in corrupted:
+        if InjectedErrorType.UNIT_MISMATCH in error_types and routing_table in corrupted:
             df = corrupted[routing_table]
             row_idx = 2 if len(df) > 2 else 0
             col = "VGE02" if is_sap else "run_uom"
@@ -123,7 +131,7 @@ class ErrorInjector:
             )
 
         # 5. Duplicate Key
-        if routing_table in corrupted:
+        if InjectedErrorType.DUPLICATE_KEY in error_types and routing_table in corrupted:
             df = corrupted[routing_table]
             row_idx = 3 if len(df) > 3 else 0
             dup_row = copy.deepcopy(df.iloc[row_idx].to_dict())
@@ -145,27 +153,27 @@ class ErrorInjector:
             )
 
         # 6. Orphan Component in BOM
-        if bom_table in corrupted:
+        if InjectedErrorType.ORPHAN_COMPONENT in error_types and bom_table in corrupted:
             df = corrupted[bom_table]
             row_idx = 1 if len(df) > 1 else 0
             col = "IDNRK" if is_sap else "child_item"
-            orig_orphan = df.at[row_idx, col]
-            injected_orphan = "MAT-PHANTOM-999"
-            df.at[row_idx, col] = injected_orphan
+            orig_child = df.at[row_idx, col]
+            injected_child = "MAT-ORPHAN-NONEXISTENT"
+            df.at[row_idx, col] = injected_child
             ground_truth.append(
                 InjectedError(
                     error_type=InjectedErrorType.ORPHAN_COMPONENT,
                     table=bom_table,
                     row_idx=row_idx,
                     column=col,
-                    details=f"BOM references component '{injected_orphan}' not in Material Master",
-                    expected_value=orig_orphan,
-                    injected_value=injected_orphan,
+                    details=f"BOM references non-existent material '{injected_child}'",
+                    expected_value=orig_child,
+                    injected_value=injected_child,
                 )
             )
 
-        # 7. Mixed Date Format
-        if order_table in corrupted:
+        # 7. Mixed Date Formats
+        if InjectedErrorType.MIXED_DATE_FORMAT in error_types and order_table in corrupted:
             df = corrupted[order_table]
             row_idx = 0
             col = "GSTRP" if is_sap else "release_date"
@@ -185,7 +193,7 @@ class ErrorInjector:
             )
 
         # 8. Whitespace / Case Inconsistent
-        if mat_table in corrupted:
+        if InjectedErrorType.WHITESPACE_CASE_INCONSISTENT in error_types and mat_table in corrupted:
             df = corrupted[mat_table]
             row_idx = 0
             col = "MATNR" if is_sap else "item_code"
@@ -205,7 +213,7 @@ class ErrorInjector:
             )
 
         # 9. Missing Mandatory Field
-        if wc_table in corrupted:
+        if InjectedErrorType.MISSING_MANDATORY_FIELD in error_types and wc_table in corrupted:
             df = corrupted[wc_table]
             row_idx = len(df) - 1
             col = "ARBPL" if is_sap else "station_id"

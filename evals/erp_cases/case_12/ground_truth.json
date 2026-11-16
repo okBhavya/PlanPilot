@@ -1,0 +1,11 @@
+[
+  {
+    "error_type": "unit_mismatch",
+    "table": "routings",
+    "row_idx": 2,
+    "column": "run_uom",
+    "details": "Invalid duration unit 'KILOGRAMS' (expected MIN, HR, SEC)",
+    "expected_value": "MIN",
+    "injected_value": "KILOGRAMS"
+  }
+]

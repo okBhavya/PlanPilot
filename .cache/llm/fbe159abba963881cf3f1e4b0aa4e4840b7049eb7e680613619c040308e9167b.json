@@ -1,0 +1,25 @@
+{
+  "prompt_hash": "fbe159abba963881cf3f1e4b0aa4e4840b7049eb7e680613619c040308e9167b",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R31_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "forbid_machine",
+            "order_id": "ORD-05",
+            "operation_id": "OP20",
+            "machine_id": "M1"
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 329,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 329,
+  "completion_tokens": 35
+}

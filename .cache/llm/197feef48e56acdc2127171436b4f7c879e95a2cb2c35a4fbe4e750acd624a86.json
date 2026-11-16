@@ -1,0 +1,26 @@
+{
+  "prompt_hash": "197feef48e56acdc2127171436b4f7c879e95a2cb2c35a4fbe4e750acd624a86",
+  "model": "claude-3-5-sonnet-20241022",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R19_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "machine_unavailable",
+            "machine_id": "M1",
+            "start": 60,
+            "end": 120,
+            "reason": "maintenance blackout"
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 330,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 330,
+  "completion_tokens": 35
+}

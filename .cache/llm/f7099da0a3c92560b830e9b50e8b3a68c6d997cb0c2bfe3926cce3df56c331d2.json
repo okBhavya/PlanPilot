@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "f7099da0a3c92560b830e9b50e8b3a68c6d997cb0c2bfe3926cce3df56c331d2",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R03_clarify",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "Could you clarify the parameters for: do not run alumnium folowing titaniam on machne M3 without 60 min cleenout?"
+        }
+      }
+    ],
+    "prompt_tokens": 333,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 333,
+  "completion_tokens": 35
+}

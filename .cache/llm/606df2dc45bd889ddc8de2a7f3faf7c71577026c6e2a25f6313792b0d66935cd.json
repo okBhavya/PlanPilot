@@ -1,0 +1,26 @@
+{
+  "prompt_hash": "606df2dc45bd889ddc8de2a7f3faf7c71577026c6e2a25f6313792b0d66935cd",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R20_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "machine_unavailable",
+            "machine_id": "M2",
+            "start": 180,
+            "end": 240,
+            "reason": "scheduled downtime"
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 329,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 329,
+  "completion_tokens": 35
+}

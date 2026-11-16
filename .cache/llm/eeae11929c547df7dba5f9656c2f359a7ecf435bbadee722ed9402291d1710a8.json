@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "eeae11929c547df7dba5f9656c2f359a7ecf435bbadee722ed9402291d1710a8",
+  "model": "claude-3-5-sonnet-20241022",
+  "response_data": {
+    "content": "Clarification needed: please provide specific machines or order IDs.",
+    "tool_calls": [
+      {
+        "id": "call_R59_clarify",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "Please specify the missing parameters (machine, orders, or duration) for: 'Batch the orders together on the CNC line'."
+        }
+      }
+    ],
+    "prompt_tokens": 328,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 328,
+  "completion_tokens": 35
+}

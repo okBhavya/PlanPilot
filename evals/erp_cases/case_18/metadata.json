@@ -1,0 +1,7 @@
+{
+  "case_id": "case_18",
+  "format": "legacy",
+  "num_errors": 1,
+  "target_defect": "mixed_date_format",
+  "description": "Single defect mixed_date_format in LEGACY extract"
+}

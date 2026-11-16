@@ -1,0 +1,24 @@
+{
+  "prompt_hash": "bc4fb2e5d3ced21bf4915c685745a49b14df4bae556eaf7f389257fe4874a90d",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R10_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "min_changeover",
+            "machine_id": "M2",
+            "min_setup_min": 30
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 330,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 330,
+  "completion_tokens": 35
+}

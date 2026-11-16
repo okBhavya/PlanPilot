@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "bef2d291041021258095ae08725f3e9b6fb36d73e1e79be5575918f9a4ecc1f2",
+  "model": "llama3",
+  "response_data": {
+    "content": "Clarification needed: please provide specific machines or order IDs.",
+    "tool_calls": [
+      {
+        "id": "call_R59_clarify",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "Please specify the missing parameters (machine, orders, or duration) for: 'Batch the orders together on the CNC line'."
+        }
+      }
+    ],
+    "prompt_tokens": 328,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 328,
+  "completion_tokens": 35
+}

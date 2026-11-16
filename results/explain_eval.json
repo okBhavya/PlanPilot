@@ -1,0 +1,13 @@
+{
+  "total_cases": 25,
+  "why_late_cases": 15,
+  "why_moved_cases": 10,
+  "late_root_cause_accuracy": 100.0,
+  "move_root_cause_accuracy": 100.0,
+  "overall_cause_identification_accuracy": 100.0,
+  "citation_verifier_pass_rate_on_faithful": 100.0,
+  "citation_verifier_rejection_rate_on_hallucinations": 100.0,
+  "citation_verifier_test_suite_score": 100.0,
+  "latency_p50_ms": 0.11,
+  "latency_p95_ms": 0.5
+}

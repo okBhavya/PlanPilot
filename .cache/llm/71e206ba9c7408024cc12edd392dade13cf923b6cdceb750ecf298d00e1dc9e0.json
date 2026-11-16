@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "71e206ba9c7408024cc12edd392dade13cf923b6cdceb750ecf298d00e1dc9e0",
+  "model": "claude-3-5-sonnet-20241022",
+  "response_data": {
+    "content": "This rule contains mutually conflicting constraints.",
+    "tool_calls": [
+      {
+        "id": "call_R65_reject",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "The rule 'Order ORD-01 must finish before ORD-01 begins' appears contradictory or semantically invalid. Please verify."
+        }
+      }
+    ],
+    "prompt_tokens": 327,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 327,
+  "completion_tokens": 35
+}

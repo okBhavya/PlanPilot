@@ -1,0 +1,6 @@
+{
+  "case_id": "case_27",
+  "format": "sap",
+  "num_errors": 5,
+  "description": "SAP multi-defect: 5 concurrent errors across CRHD, PLPO, STPO, AFKO"
+}

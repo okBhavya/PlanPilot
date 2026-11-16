@@ -1,0 +1,11 @@
+[
+  {
+    "error_type": "whitespace_case_inconsistent",
+    "table": "items",
+    "row_idx": 0,
+    "column": "item_code",
+    "details": "Material ID contains untrimmed whitespace and inconsistent casing",
+    "expected_value": "MAT-PROD-001",
+    "injected_value": "  mat-prod-001  "
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "prompt_hash": "41c5b0821286d0a65a8d32b2dd3ff0cb72d46bd8eb085a9fa6a4137b19220923",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R12_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "min_changeover",
+            "machine_id": "M4",
+            "min_setup_min": 60
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 332,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 332,
+  "completion_tokens": 35
+}

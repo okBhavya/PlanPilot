@@ -1,0 +1,11 @@
+[
+  {
+    "error_type": "orphan_component",
+    "table": "STPO",
+    "row_idx": 1,
+    "column": "IDNRK",
+    "details": "BOM references non-existent material 'MAT-ORPHAN-NONEXISTENT'",
+    "expected_value": "MAT-COMP-002",
+    "injected_value": "MAT-ORPHAN-NONEXISTENT"
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "prompt_hash": "b90a4dfb825d9bc892b03fe2823562ae50ea3cff2fbe26bf2fcdb1c5fa1474bf",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R17_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "machine_unavailable",
+            "machine_id": "M3",
+            "start": 50,
+            "end": 120,
+            "reason": "calibration"
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 330,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 330,
+  "completion_tokens": 35
+}

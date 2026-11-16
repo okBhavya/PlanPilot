@@ -1,0 +1,11 @@
+[
+  {
+    "error_type": "circular_bom",
+    "table": "STPO",
+    "row_idx": 10,
+    "column": "IDNRK",
+    "details": "Circular dependency injected: MAT-COMP-001 -> MAT-PROD-001 -> MAT-COMP-001",
+    "expected_value": null,
+    "injected_value": "MAT-PROD-001"
+  }
+]

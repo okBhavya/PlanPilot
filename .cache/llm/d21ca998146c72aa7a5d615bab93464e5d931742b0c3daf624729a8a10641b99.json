@@ -1,0 +1,26 @@
+{
+  "prompt_hash": "d21ca998146c72aa7a5d615bab93464e5d931742b0c3daf624729a8a10641b99",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R19_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "machine_unavailable",
+            "machine_id": "M1",
+            "start": 60,
+            "end": 120,
+            "reason": "maintenance blackout"
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 330,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 330,
+  "completion_tokens": 35
+}

@@ -1,0 +1,7 @@
+{
+  "case_id": "case_11",
+  "format": "sap",
+  "num_errors": 1,
+  "target_defect": "unit_mismatch",
+  "description": "Single defect unit_mismatch in SAP extract"
+}

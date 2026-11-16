@@ -1,0 +1,26 @@
+{
+  "prompt_hash": "2aa6d521b8e4f4aefa541615fb790781904e6989dbfb9616f8010b3a406f5b7b",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R20_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "machine_unavailable",
+            "machine_id": "M2",
+            "start": 180,
+            "end": 240,
+            "reason": "scheduled downtime"
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 329,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 329,
+  "completion_tokens": 35
+}

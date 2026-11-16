@@ -1,0 +1,6 @@
+{
+  "case_id": "case_30",
+  "format": "legacy",
+  "num_errors": 9,
+  "description": "Legacy full stress test: all 9 defect types present simultaneously"
+}

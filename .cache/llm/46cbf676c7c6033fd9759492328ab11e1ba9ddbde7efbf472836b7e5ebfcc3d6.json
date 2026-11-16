@@ -1,0 +1,26 @@
+{
+  "prompt_hash": "46cbf676c7c6033fd9759492328ab11e1ba9ddbde7efbf472836b7e5ebfcc3d6",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R17_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "machine_unavailable",
+            "machine_id": "M3",
+            "start": 50,
+            "end": 120,
+            "reason": "calibration"
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 330,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 330,
+  "completion_tokens": 35
+}

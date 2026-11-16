@@ -1,0 +1,24 @@
+{
+  "prompt_hash": "47f9ff1247ea1f7108af697a727f3237da7ce62f92b4111ba4fe024ee50994d9",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R47_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "hard_due_date",
+            "order_id": "ORD-03",
+            "deadline": 320
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 327,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 327,
+  "completion_tokens": 35
+}

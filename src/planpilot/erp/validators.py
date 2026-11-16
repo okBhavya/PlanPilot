@@ -40,9 +40,12 @@ class DeterministicValidator:
         pass
 
     def validate(
-        self, tables: dict[str, pd.DataFrame], is_sap: bool = True
+        self, tables: dict[str, pd.DataFrame], is_sap: bool | None = None
     ) -> ValidationReport:
         """Run all deterministic validations against the provided tables."""
+        if is_sap is None:
+            is_sap = "CRHD" in tables or "PLPO" in tables
+
         con = duckdb.connect(database=":memory:")
         for name, df in tables.items():
             if len(df.columns) > 0:

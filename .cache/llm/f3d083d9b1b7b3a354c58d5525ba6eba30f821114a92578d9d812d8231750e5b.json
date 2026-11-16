@@ -1,0 +1,26 @@
+{
+  "prompt_hash": "f3d083d9b1b7b3a354c58d5525ba6eba30f821114a92578d9d812d8231750e5b",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R01_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "forbid_sequence",
+            "machine_id": "M1",
+            "from_material": "titanium",
+            "to_material": "aluminium",
+            "unless_cleanout_min": 30
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 333,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 333,
+  "completion_tokens": 35
+}

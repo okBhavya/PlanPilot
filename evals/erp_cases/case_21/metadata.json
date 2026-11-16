@@ -1,0 +1,7 @@
+{
+  "case_id": "case_21",
+  "format": "sap",
+  "num_errors": 1,
+  "target_defect": "missing_mandatory_field",
+  "description": "Single defect missing_mandatory_field in SAP extract"
+}

@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "bc9d149b2d9ed6377c7054edc1d7b0858ef951ba3fccd9166f2e29f0cd8e0aa3",
+  "model": "claude-3-5-sonnet-20241022",
+  "response_data": {
+    "content": "Clarification needed: please provide specific machines or order IDs.",
+    "tool_calls": [
+      {
+        "id": "call_R56_clarify",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "Please specify the missing parameters (machine, orders, or duration) for: 'Never run steel on the machine without a cleanout'."
+        }
+      }
+    ],
+    "prompt_tokens": 329,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 329,
+  "completion_tokens": 35
+}

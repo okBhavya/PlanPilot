@@ -1,0 +1,26 @@
+{
+  "prompt_hash": "39868e5897ac2bd0e18e4ac21949db88131aef33be382a272c57cd1e9452985f",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R06_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "forbid_sequence",
+            "machine_id": "M2",
+            "from_material": "composite",
+            "to_material": "plastic",
+            "unless_cleanout_min": 15
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 334,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 334,
+  "completion_tokens": 35
+}

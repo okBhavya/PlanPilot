@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "e5dcd4f7a72acf3a1dca226afc84f474384b3cae3363801dee6e625efe56d99c",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "This rule contains mutually conflicting constraints.",
+    "tool_calls": [
+      {
+        "id": "call_R63_reject",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "The rule 'Enforce minimum changeover time of -30 minutes on machine M2' appears contradictory or semantically invalid. Please verify."
+        }
+      }
+    ],
+    "prompt_tokens": 330,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 330,
+  "completion_tokens": 35
+}

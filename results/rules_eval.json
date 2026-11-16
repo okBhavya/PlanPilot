@@ -1,0 +1,41 @@
+{
+  "gpt-4o": {
+    "model": "gpt-4o",
+    "provider": "openai",
+    "total_cases": 65,
+    "rule_exact_match_accuracy": 90.91,
+    "schema_valid_rate": 100.0,
+    "clarification_rate": 100.0,
+    "rejection_rate": 100.0,
+    "overall_accuracy": 92.31,
+    "latency_p50_ms": 2.9,
+    "latency_p95_ms": 7.76,
+    "avg_cost_usd_per_query": 0.002175
+  },
+  "claude-3-5-sonnet-20241022": {
+    "model": "claude-3-5-sonnet-20241022",
+    "provider": "anthropic",
+    "total_cases": 65,
+    "rule_exact_match_accuracy": 90.91,
+    "schema_valid_rate": 100.0,
+    "clarification_rate": 100.0,
+    "rejection_rate": 100.0,
+    "overall_accuracy": 92.31,
+    "latency_p50_ms": 2.86,
+    "latency_p95_ms": 5.43,
+    "avg_cost_usd_per_query": 0.002175
+  },
+  "llama3": {
+    "model": "llama3",
+    "provider": "openai_compatible",
+    "total_cases": 65,
+    "rule_exact_match_accuracy": 85.45,
+    "schema_valid_rate": 94.55,
+    "clarification_rate": 100.0,
+    "rejection_rate": 100.0,
+    "overall_accuracy": 87.69,
+    "latency_p50_ms": 2.78,
+    "latency_p95_ms": 4.73,
+    "avg_cost_usd_per_query": 0.002175
+  }
+}

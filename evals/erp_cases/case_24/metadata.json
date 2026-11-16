@@ -1,0 +1,6 @@
+{
+  "case_id": "case_24",
+  "format": "legacy",
+  "num_errors": 3,
+  "description": "Legacy multi-defect: circular BOM + negative duration + orphan component"
+}

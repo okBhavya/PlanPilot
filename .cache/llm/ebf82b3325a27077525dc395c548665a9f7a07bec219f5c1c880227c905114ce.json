@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "ebf82b3325a27077525dc395c548665a9f7a07bec219f5c1c880227c905114ce",
+  "model": "claude-3-5-sonnet-20241022",
+  "response_data": {
+    "content": "Clarification needed: please provide specific machines or order IDs.",
+    "tool_calls": [
+      {
+        "id": "call_R57_clarify",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "Please specify the missing parameters (machine, orders, or duration) for: 'Add a maintenance window tomorrow afternoon'."
+        }
+      }
+    ],
+    "prompt_tokens": 326,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 326,
+  "completion_tokens": 35
+}

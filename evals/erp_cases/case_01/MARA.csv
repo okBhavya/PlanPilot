@@ -1,0 +1,14 @@
+MATNR,WERKS,MTART,MEINS,MAKTX
+MAT-PROD-001,1000,FERT,PCE,Finished Product Alpha 1
+MAT-PROD-002,1000,FERT,PCE,Finished Product Alpha 2
+MAT-PROD-003,1000,FERT,PCE,Finished Product Alpha 3
+MAT-PROD-004,1000,FERT,PCE,Finished Product Alpha 4
+MAT-PROD-005,1000,FERT,PCE,Finished Product Alpha 5
+MAT-COMP-001,1000,HALB,PCE,Component Material 1
+MAT-COMP-002,1000,ROH,KG,Component Material 2
+MAT-COMP-003,1000,HALB,PCE,Component Material 3
+MAT-COMP-004,1000,ROH,KG,Component Material 4
+MAT-COMP-005,1000,HALB,PCE,Component Material 5
+MAT-COMP-006,1000,ROH,KG,Component Material 6
+MAT-COMP-007,1000,HALB,PCE,Component Material 7
+MAT-COMP-008,1000,ROH,KG,Component Material 8

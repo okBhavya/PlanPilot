@@ -1,0 +1,21 @@
+[
+  {
+    "error_type": "duplicate_key",
+    "table": "routings",
+    "row_idx": 12,
+    "column": "routing_id, op_seq",
+    "details": "Duplicate routing step key",
+    "expected_value": null,
+    "injected_value": {
+      "routing_id": "ROUT-0002",
+      "product_code": "MAT-PROD-002",
+      "op_seq": "0020",
+      "station_id": "WC-LATHE-02",
+      "setup_mins": 15.0,
+      "setup_uom": "MIN",
+      "run_mins": 45.0,
+      "run_uom": "MIN",
+      "op_description": "Operation 0020 for MAT-PROD-002"
+    }
+  }
+]

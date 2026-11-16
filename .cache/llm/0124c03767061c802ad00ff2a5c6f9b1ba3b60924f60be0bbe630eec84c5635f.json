@@ -1,0 +1,26 @@
+{
+  "prompt_hash": "0124c03767061c802ad00ff2a5c6f9b1ba3b60924f60be0bbe630eec84c5635f",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R01_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "forbid_sequence",
+            "machine_id": "M1",
+            "from_material": "titanium",
+            "to_material": "aluminium",
+            "unless_cleanout_min": 30
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 333,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 333,
+  "completion_tokens": 35
+}

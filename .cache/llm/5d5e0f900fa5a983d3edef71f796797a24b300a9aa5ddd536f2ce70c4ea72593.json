@@ -1,0 +1,26 @@
+{
+  "prompt_hash": "5d5e0f900fa5a983d3edef71f796797a24b300a9aa5ddd536f2ce70c4ea72593",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R05_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "forbid_sequence",
+            "machine_id": "M1",
+            "from_material": "steel",
+            "to_material": "composite",
+            "unless_cleanout_min": 120
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 331,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 331,
+  "completion_tokens": 35
+}

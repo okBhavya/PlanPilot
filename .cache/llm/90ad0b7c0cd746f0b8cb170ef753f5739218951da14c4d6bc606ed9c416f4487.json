@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "90ad0b7c0cd746f0b8cb170ef753f5739218951da14c4d6bc606ed9c416f4487",
+  "model": "llama3",
+  "response_data": {
+    "content": "This rule contains mutually conflicting constraints.",
+    "tool_calls": [
+      {
+        "id": "call_R64_reject",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "The rule 'Pin order ORD-999 to nonexistent machine GHOST_99' appears contradictory or semantically invalid. Please verify."
+        }
+      }
+    ],
+    "prompt_tokens": 327,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 327,
+  "completion_tokens": 35
+}

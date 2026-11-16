@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "c0304132b52ca53dbb392b6ad5289556f7eda024a54a2607b36b62df45546895",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "This rule contains mutually conflicting constraints.",
+    "tool_calls": [
+      {
+        "id": "call_R61_reject",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "The rule 'Order ORD-01 must finish before ORD-02 starts, and ORD-02 must finish before ORD-01 starts' appears contradictory or semantically invalid. Please verify."
+        }
+      }
+    ],
+    "prompt_tokens": 334,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 334,
+  "completion_tokens": 35
+}

@@ -1,0 +1,7 @@
+{
+  "case_id": "case_07",
+  "format": "sap",
+  "num_errors": 1,
+  "target_defect": "circular_bom",
+  "description": "Single defect circular_bom in SAP extract"
+}

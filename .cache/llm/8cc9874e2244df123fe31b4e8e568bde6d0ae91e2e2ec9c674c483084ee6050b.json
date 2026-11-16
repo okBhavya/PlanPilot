@@ -1,0 +1,24 @@
+{
+  "prompt_hash": "8cc9874e2244df123fe31b4e8e568bde6d0ae91e2e2ec9c674c483084ee6050b",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R48_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "hard_due_date",
+            "order_id": "ORD-04",
+            "deadline": 500
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 329,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 329,
+  "completion_tokens": 35
+}

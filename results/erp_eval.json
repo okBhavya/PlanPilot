@@ -1,0 +1,62 @@
+{
+  "total_cases": 30,
+  "total_injected_defects": 60,
+  "total_detected_defects": 60,
+  "true_positives": 60,
+  "false_positives": 0,
+  "false_negatives": 0,
+  "precision": 100.0,
+  "recall": 100.0,
+  "f1_score": 100.0,
+  "clean_instances_mapped_successfully": 4,
+  "clean_instances_solved_to_optimal": 4,
+  "latency_p50_ms": 120.11,
+  "latency_p95_ms": 287.93,
+  "per_defect_summary": {
+    "dangling_work_center": {
+      "tp": 10,
+      "fp": 0,
+      "fn": 0
+    },
+    "circular_bom": {
+      "tp": 10,
+      "fp": 0,
+      "fn": 0
+    },
+    "zero_negative_duration": {
+      "tp": 10,
+      "fp": 0,
+      "fn": 0
+    },
+    "unit_mismatch": {
+      "tp": 8,
+      "fp": 0,
+      "fn": 0
+    },
+    "duplicate_key": {
+      "tp": 6,
+      "fp": 0,
+      "fn": 0
+    },
+    "orphan_component": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 0
+    },
+    "mixed_date_format": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 0
+    },
+    "whitespace_case_inconsistent": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 0
+    },
+    "missing_mandatory_field": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 0
+    }
+  }
+}

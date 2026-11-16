@@ -1,0 +1,6 @@
+{
+  "case_id": "case_26",
+  "format": "legacy",
+  "num_errors": 4,
+  "description": "Legacy multi-defect: dangling WC + duplicate key + unit mismatch + mixed dates"
+}

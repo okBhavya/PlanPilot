@@ -1,0 +1,21 @@
+[
+  {
+    "error_type": "duplicate_key",
+    "table": "PLPO",
+    "row_idx": 12,
+    "column": "PLNNR, VORNR",
+    "details": "Duplicate routing step key",
+    "expected_value": null,
+    "injected_value": {
+      "PLNNR": "ROUT-0002",
+      "MATNR": "MAT-PROD-002",
+      "VORNR": "0020",
+      "ARBPL": "WC-LATHE-02",
+      "VGW01": 45.0,
+      "VGE01": "MIN",
+      "VGW02": 30.0,
+      "VGE02": "MIN",
+      "LTXA1": "Operation 0020 for MAT-PROD-002"
+    }
+  }
+]

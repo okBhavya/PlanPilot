@@ -1,0 +1,28 @@
+{
+  "prompt_hash": "62e406cd384d0bdb7bf8407ddf5c2a5055db5f933d8e3ec571c7193b829848f2",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R52_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "batch_together",
+            "order_ids": [
+              "ORD-03",
+              "ORD-04"
+            ],
+            "machine_id": "M2",
+            "max_span_min": 120
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 331,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 331,
+  "completion_tokens": 35
+}

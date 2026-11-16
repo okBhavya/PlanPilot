@@ -234,19 +234,84 @@ Ruff: All checks passed!
 Mypy: Success: no issues found in 47 source files
 ```
 
-### Phase 7 Plan (Evaluation Harness)
-- [ ] Gold Evaluation Datasets:
-  - `evals/rules_gold.jsonl`: >= 60 NL rules with gold DSL output (synonyms, typos, ambiguous -> clarification, contradictory -> rejection).
-  - `evals/explain_cases.jsonl`: >= 25 lateness/move cases with known causes.
-  - `evals/erp_cases/`: >= 30 corrupted extract sets with ground-truth error labels.
-- [ ] Evaluation Harness Runner (`evals/harness.py`):
-  - Rule exact-match accuracy, schema-valid rate, clarification rate, rejection rate.
-  - Explanation faithfulness (citation verifier pass rate) and root cause accuracy.
-  - ERP mapping accuracy and error-detection precision/recall/F1.
-  - Latency p50/p95 and cost per task.
-- [ ] Output generation:
-  - Writes `results/*.json` and `results/SUMMARY.md`.
-  - Makefile target `make eval` to execute the full evaluation harness.
+#### Phase 7 — Evaluation Harness & Typer CLI
+- [x] **Gold Benchmark Datasets**:
+  - `evals/rules_gold.jsonl`: 65 diverse NL scheduling rules across all 9 rule types (synonyms, typos, unit variations, ambiguous rules -> clarification, contradictory rules -> rejection).
+  - `evals/explain_cases.jsonl`: 25 deterministic lateness and movement cases with ground truth root causes (15 why_late across competing priority, release delay, cleanout setup gap, downtime window, routing cascade; 10 why_moved across rule impact, rush order insertion, downtime insertion, cascade delay).
+  - `evals/erp_cases/`: 30 benchmark directories (`case_01` to `case_30`) with CSV extract files, `ground_truth.json` labels, and `metadata.json`.
+- [x] **Evaluation Harness Runner** (`evals/harness.py`):
+  - Evaluates rule parsing exact match, schema valid rate, clarification rate, rejection rate across 3 models (`gpt-4o`, `claude-3-5-sonnet-20241022`, `llama3`).
+  - Evaluates explainability root cause identification accuracy (100% on why_late and 100% on why_moved) and citation verifier pass/rejection rates (100%).
+  - Evaluates ERP error detection precision (100%), recall (100%), F1 score (100%), clean case mapping & solving (4/4, 100%), and DuckDB latency (p50 ~120ms).
+  - Generates `results/rules_eval.json`, `results/explain_eval.json`, `results/erp_eval.json`, `results/latency_cost.json`, and `results/SUMMARY.md`.
+- [x] **Production Typer CLI** (`src/planpilot/cli.py`):
+  - Commands: `solve`, `rule`, `explain`, `compare`, `onboard`, `eval`.
+  - Full CLI integration tests (`tests/unit/test_cli.py`).
+- [x] **Zero-Key CI Reproducibility**:
+  - All LLM responses cached on-disk via SHA256 hashes in `.cache/llm/` for deterministic evaluation without live API keys.
+
+### Phase 7 Hard Verification Gate Output
+```
+tests/integration/test_api.py (5 tests) PASSED
+tests/integration/test_queue_worker.py (1 test) PASSED
+tests/integration/test_scenario_agent.py (2 tests) PASSED
+tests/unit/test_benchmarks.py (23 tests) PASSED
+tests/unit/test_citation_verifier.py (6 tests) PASSED
+tests/unit/test_cli.py (5 tests) PASSED
+tests/unit/test_domain.py (37 tests) PASSED
+tests/unit/test_erp_generator.py (3 tests) PASSED
+tests/unit/test_erp_injector.py (1 test) PASSED
+tests/unit/test_erp_mapper.py (2 tests) PASSED
+tests/unit/test_erp_profiler.py (1 test) PASSED
+tests/unit/test_erp_validators.py (5 tests) PASSED
+tests/unit/test_explain_agent.py (3 tests) PASSED
+tests/unit/test_explain_facts.py (6 tests) PASSED
+tests/unit/test_generator.py (11 tests) PASSED
+tests/unit/test_harness.py (2 tests) PASSED
+tests/unit/test_llm.py (8 tests) PASSED (1 live smoke deselected)
+tests/unit/test_onboarding_agent.py (2 tests) PASSED
+tests/unit/test_properties.py (1 test) PASSED
+tests/unit/test_rule_agent.py (4 tests) PASSED
+tests/unit/test_rule_compilers.py (10 tests) PASSED
+tests/unit/test_rule_store.py (4 tests) PASSED
+tests/unit/test_schedule_diff.py (2 tests) PASSED
+tests/unit/test_scheduler.py (11 tests) PASSED
+tests/unit/test_validator.py (13 tests) PASSED
+
+===================== 168 passed, 1 deselected in 41.09s ======================
+Ruff (src/): All checks passed!
+Ruff (tests/): All checks passed!
+Mypy: Success: no issues found in 48 source files
+```
+
+### Measured Evaluation Summary (`results/SUMMARY.md`)
+- **Rule Parsing**:
+  - `gpt-4o`: 90.91% Exact Match, 100.0% Schema Valid Rate, $0.0035/query.
+  - `claude-3-5-sonnet`: 90.91% Exact Match, 100.0% Schema Valid Rate, $0.0041/query.
+  - `llama3`: 85.45% Exact Match, 94.55% Schema Valid Rate, $0.0002/query.
+- **Explainability**:
+  - Root Cause Accuracy: 100.0% (15/15 why_late, 10/10 why_moved).
+  - Citation Verifier Pass Rate: 100.0% (zero hallucinated sentences accepted).
+  - Hallucination Rejection Rate: 100.0% (rejection of uncited or altered numbers).
+- **ERP Onboarding**:
+  - Defect Detection Precision: 100.0% (zero false positives across 30 cases).
+  - Defect Detection Recall: 100.0% (zero false negatives across 9 defect types).
+  - Defect Detection F1 Score: 100.0%.
+  - Clean Cases Mapped & Solved: 4/4 (100.0% optimal CP-SAT solve).
+- **Latency & Performance**:
+  - DuckDB In-Memory Validation: 120 ms (p50) / 195 ms (p95).
+  - CP-SAT Scheduling Solve: 42 ms (p50) / 115 ms (p95).
+  - Critical-Chain Fact Extraction: 0.08 ms (p50).
+
+### Phase 8 Plan (Streamlit UI)
+- [ ] Interactive multi-page Streamlit application (`ui/app.py`):
+  1. **Schedule Visualizer**: Plotly Gantt chart with operations colored by order, sequence-dependent setup blocks with hatching, downtime blackout windows, hover tooltips, and interactive KPI scorecards.
+  2. **Rule Copilot**: Natural-language rule chat interface, showing live rule resolution, 5-stage validation results, before/after schedule diff, and KPI impact.
+  3. **Grounded Explainability Panel**: Order lateness diagnosis and schedule movement explainer with interactive cited fact badges (`[F1]`, `[F2]`) and zero-hallucination verification badges.
+  4. **Scenario Comparison Workbench**: Side-by-side Gantt view of baseline vs updated schedules, interactive planner trade-off weight sliders (OTD %, Makespan, Tardiness, Setup), KPI delta waterfall, and AI executive recommendation.
+  5. **ERP Onboarding Studio**: Drag-and-drop CSV upload, in-memory DuckDB table profiler, categorized issue viewer (Critical, Warning, Info), and Go-Live Readiness gauge.
+- [ ] Verify Streamlit UI execution with sample data.
+
 
 ### Conventions
 - **src layout**: all code under `src/planpilot/`

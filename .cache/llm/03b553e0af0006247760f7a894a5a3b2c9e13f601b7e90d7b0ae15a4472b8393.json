@@ -1,0 +1,25 @@
+{
+  "prompt_hash": "03b553e0af0006247760f7a894a5a3b2c9e13f601b7e90d7b0ae15a4472b8393",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R40_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "max_consecutive_runs",
+            "machine_id": "M2",
+            "material_family": "plastic",
+            "max_runs": 2
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 332,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 332,
+  "completion_tokens": 35
+}

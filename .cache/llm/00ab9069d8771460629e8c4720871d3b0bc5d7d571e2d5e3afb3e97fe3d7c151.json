@@ -1,0 +1,25 @@
+{
+  "prompt_hash": "00ab9069d8771460629e8c4720871d3b0bc5d7d571e2d5e3afb3e97fe3d7c151",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R43_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "max_consecutive_runs",
+            "machine_id": "M1",
+            "material_family": "copper",
+            "max_runs": 3
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 329,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 329,
+  "completion_tokens": 35
+}

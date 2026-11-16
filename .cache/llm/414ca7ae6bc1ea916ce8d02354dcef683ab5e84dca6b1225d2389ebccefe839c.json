@@ -1,0 +1,25 @@
+{
+  "prompt_hash": "414ca7ae6bc1ea916ce8d02354dcef683ab5e84dca6b1225d2389ebccefe839c",
+  "model": "gpt-4o",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R30_prop",
+        "name": "propose_rule",
+        "arguments": {
+          "rule_json": {
+            "type": "forbid_machine",
+            "order_id": "ORD-04",
+            "operation_id": "OP10",
+            "machine_id": "M3"
+          }
+        }
+      }
+    ],
+    "prompt_tokens": 330,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 330,
+  "completion_tokens": 35
+}

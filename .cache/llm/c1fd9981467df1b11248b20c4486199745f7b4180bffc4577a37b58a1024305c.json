@@ -1,0 +1,20 @@
+{
+  "prompt_hash": "c1fd9981467df1b11248b20c4486199745f7b4180bffc4577a37b58a1024305c",
+  "model": "llama3",
+  "response_data": {
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_R41_clarify",
+        "name": "ask_clarification",
+        "arguments": {
+          "question": "Could you clarify the parameters for: max 4 consecutiv runs of alumnium on machne M3?"
+        }
+      }
+    ],
+    "prompt_tokens": 329,
+    "completion_tokens": 35
+  },
+  "prompt_tokens": 329,
+  "completion_tokens": 35
+}

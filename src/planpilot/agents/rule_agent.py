@@ -71,10 +71,17 @@ GUIDELINES:
 class RuleAgent:
     """Agent that translates natural language rules into validated Rule DSL constraints."""
 
-    def __init__(self, plant: Plant, rule_store: RuleStore, llm_client: LLMClient) -> None:
+    def __init__(
+        self,
+        plant: Plant,
+        rule_store: RuleStore,
+        llm_client: LLMClient,
+        check_feasibility: bool = True,
+    ) -> None:
         self.plant = plant
         self.rule_store = rule_store
         self.llm = llm_client
+        self.check_feasibility = check_feasibility
         self.tools = self._build_tool_definitions()
 
     def _build_tool_definitions(self) -> list[ToolDefinition]:
@@ -178,7 +185,9 @@ class RuleAgent:
 
                 elif tc.name == "propose_rule":
                     rule_json = tc.arguments.get("rule_json", {})
-                    validation, applied_rule = self.rule_store.add_rule(rule_json)
+                    validation, applied_rule = self.rule_store.add_rule(
+                        rule_json, check_feasibility=self.check_feasibility
+                    )
                     if validation.valid and applied_rule is not None:
                         msg = f"Rule successfully validated and applied: {applied_rule.type.value}"
                         return RuleAgentResponse(

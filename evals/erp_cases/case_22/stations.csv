@@ -1,0 +1,5 @@
+station_id,plant_id,station_name,station_type,capacity_count
+WC-MILL-01,1000,Machining Center MILL #1,001,1
+WC-LATHE-02,1000,Machining Center LATHE #2,001,1
+WC-ASSY-03,1000,Machining Center ASSY #3,001,1
+,1000,Machining Center INSPECT #4,001,1

@@ -1,0 +1,11 @@
+[
+  {
+    "error_type": "mixed_date_format",
+    "table": "work_orders",
+    "row_idx": 0,
+    "column": "release_date",
+    "details": "Date '11/25/2026' does not follow ISO-8601 (YYYY-MM-DD)",
+    "expected_value": "2026-11-01",
+    "injected_value": "11/25/2026"
+  }
+]
