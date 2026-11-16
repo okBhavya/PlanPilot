@@ -207,3 +207,12 @@ class ScheduleDiffEngine:
             deltas=deltas,
             facts=facts,
         )
+
+
+__all__ = [
+    "AssignmentDelta",
+    "KPIDiff",
+    "MovementType",
+    "ScheduleComparison",
+    "ScheduleDiffEngine",
+]

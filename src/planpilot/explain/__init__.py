@@ -9,6 +9,7 @@ from planpilot.explain.benchmarks import (
 )
 from planpilot.explain.diff import (
     AssignmentDelta,
+    KPIDiff,
     MovementType,
     ScheduleComparison,
     ScheduleDiffEngine,
@@ -33,6 +34,7 @@ __all__ = [
     "Fact",
     "FactExtractor",
     "FactType",
+    "KPIDiff",
     "LatenessDiagnosis",
     "MovementType",
     "ScheduleComparison",

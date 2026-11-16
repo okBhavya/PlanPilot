@@ -365,4 +365,62 @@ In `ExplainAgent`, if `CitationVerifier.verify()` fails:
 
 ---
 
+## Phase 6 — Scenario Comparison, Async Worker & REST API
+
+### Decision: Multi-Criteria Utility Weighting for Scenario Comparison
+
+**Choice:** The `ScenarioAgent` evaluates alternative schedules using a deterministic utility score $U(S) \in [0, 100]$:
+$$U(S) = w_{\text{otd}} \cdot \text{OTD\%} + w_{\text{makespan}} \cdot U_{\text{makespan}} + w_{\text{tardiness}} \cdot U_{\text{tardiness}} + w_{\text{setup}} \cdot U_{\text{setup}}$$
+where weights normalize to 1.0, and individual metrics are mapped to $[0, 100]$ utility scales relative to the comparison baseline.
+
+**Why:**
+- In production scheduling, there is rarely a single "perfect" schedule. A plant manager faces explicit trade-offs: e.g., accepting a 5% increase in total makespan to improve high-priority On-Time Delivery from 80% to 100%.
+- By making utility weights configurable (`ScenarioWeights(weight_on_time=0.45, weight_makespan=0.25, ...)`), the copilot allows planners to express plant-specific strategic goals (e.g. "quarter-end revenue rush" vs. "cost minimization").
+- **LLM never invents deltas:** The agent computes exact delta metrics ($\Delta\text{makespan}$, $\Delta\text{OTD}$, $\Delta\text{tardiness}$, $\Delta\text{setup}$) deterministically first. The LLM only receives the factual delta table and synthesizes an executive summary justifying the recommended winner.
+
+**Interview Q:** *Why not let the LLM directly choose the winning schedule?*
+**A:** LLMs are notorious for hallucinating numbers, misjudging numeric deltas, and being biased by prompt wording. Grounding the recommendation in a deterministic multi-attribute utility theory (MAUT) calculation guarantees that schedule ranking is 100% reproducible and verifiable, while the LLM provides natural-language narrative and trade-off explanations.
+
+---
+
+### Decision: Swappable `JobQueue` Protocol vs. Heavyweight Celery
+
+**Choice:** We defined an abstract `JobQueue` protocol (`enqueue`, `get_status`, `get_result`, `complete`, `fail`) with two concrete implementations:
+1. `MemoryJobQueue`: An in-memory, async queue utilizing Python `asyncio` background tasks, requiring zero external services for local development, fast CLI execution, and isolated unit tests.
+2. `ArqJobQueue`: A lightweight Redis-backed queue powered by `arq` for high-throughput production deployment.
+
+**Why:**
+- Heavyweight frameworks like Celery introduce significant dependency bloat (kombu, billiard, flower), require complex broker/backend configurations, and lack clean native async/await primitives.
+- `arq` is built on top of `redis-py` using native `asyncio`, aligning perfectly with FastAPI's async architecture.
+- Decoupling via a `JobQueue` protocol ensures tests and local single-node deployments can run with zero infrastructure dependencies, while Kubernetes deployments seamlessly plug in Redis.
+
+**Interview Q:** *Why must CP-SAT solves run in an asynchronous background worker?*
+**A:** CP-SAT solving is CPU-bound. If executed inside a synchronous FastAPI route handler, it blocks the Python GIL and event loop, freezing all concurrent HTTP requests. Running solves in background workers via a task queue ensures the API gateway remains responsive ($< 5\text{ms}$ response times) and provides clients with a pollable Job ID (`POST /schedules` $\to$ `GET /jobs/{job_id}`).
+
+---
+
+### Decision: SQLAlchemy 2.0 Async Persistence with JSON Domain Snapshots
+
+**Choice:** We use SQLAlchemy 2.0 async engine (`create_async_engine`) with `aiosqlite` for local dev/testing and `asyncpg` for PostgreSQL production. Core scheduling entities (`PlantRecord`, `ScheduleRecord`, `RuleRecord`, `JobRecord`) store their underlying Pydantic models as structured JSON text fields.
+
+**Why:**
+- Scheduling domains (Plants, Schedules, BOMs, Routings) are deeply nested, graph-like hierarchical structures. Decomposing every operation, machine interval, and assignment into normalized relational tables would require 15+ table joins for a single schedule load.
+- Storing domain snapshots as validated Pydantic JSON combines strict schema validation at the application boundary with rapid document-style read/write throughput in the database.
+- Idempotent upserts are handled via `await session.merge(record)`, allowing seamless overwrites and re-solves without primary key collisions.
+
+---
+
+### Decision: REST API Security & Defense-in-Depth
+
+**Choice:**
+1. **API Key Authentication:** All protected endpoints require a valid `X-API-Key` header verified against configured server keys.
+2. **Request Size Middleware:** Middleware inspects `Content-Length` headers and rejects payloads exceeding 20 MB with `HTTP 413 Payload Too Large`.
+3. **CORS:** Controlled origins for secure browser access from Streamlit UI and enterprise frontend dashboards.
+
+**Why:**
+- Production manufacturing systems contain sensitive operational data (capacity, formulas, customer order volumes). Strict header-based authentication prevents unauthorized API access.
+- Onboarding and schedule endpoints accept CSV files and JSON payloads; enforcing an explicit payload size limit prevents resource exhaustion and Denial-of-Service (DoS) attacks on the parser.
+
+---
+
 *More sections will be added as phases are completed.*

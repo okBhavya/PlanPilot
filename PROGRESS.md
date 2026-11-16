@@ -1,6 +1,6 @@
 # PlanPilot Progress
 
-## Current Status: Phase 5 — Agentic ERP Data Onboarding ✅ (Moving to Phase 6)
+## Current Status: Phase 6 — Scenario Comparison, Async Worker & REST API ✅ (Moving to Phase 7)
 
 ### Completed
 
@@ -176,31 +176,77 @@ Ruff: All checks passed!
 Mypy: Success: no issues found in 37 source files
 ```
 
-### Phase 6 Plan (Scenario Comparison + API + Worker)
-- [ ] Scenario Comparison Agent (`src/planpilot/agents/scenario_agent.py`):
-  - Given Schedule A and Schedule B, deterministically calculates KPI deltas (throughput, on-time delivery %, makespan, machine utilization).
-  - Formulates weighted utility score with configurable/state-level trade-off weights (e.g. prioritize due dates over setup efficiency).
-  - LLM synthesizes clear executive recommendation citing exact delta values.
-- [ ] JobQueue Protocol & Async Worker (`src/planpilot/queue/`, `src/planpilot/worker/`):
-  - Minimal swappable `JobQueue` protocol (`enqueue`, `get_status`, `get_result`).
-  - In-process / arq queue adapter for async CP-SAT solves.
-- [ ] Database & Persistence (`src/planpilot/db/`):
-  - SQLAlchemy 2.0 async models for `Plant`, `Schedule`, `Rule`, `Job`, `LLMTrace`.
-  - SQLite default with PostgreSQL support.
-- [ ] Production FastAPI Application (`src/planpilot/api/`):
+#### Phase 6 — Scenario Comparison, Async Worker & REST API
+- [x] **Scenario Comparison Agent** (`src/planpilot/agents/scenario_agent.py`):
+  - Evaluates schedules with deterministic multi-attribute utility theory (MAUT).
+  - Calculates exact deltas for makespan, on-time delivery %, tardiness, and changeover setup times.
+  - Recommends winning schedule based on configurable planner trade-off weights.
+- [x] **Swappable JobQueue & Async Background Worker** (`src/planpilot/queue/`, `src/planpilot/worker/`):
+  - Protocol-based queue design (`JobQueue`) with `MemoryJobQueue` (asyncio in-memory) and `ArqJobQueue` (Redis-backed production queue).
+  - Background worker task `execute_solve_job` running non-blocking CP-SAT solves and persisting results.
+- [x] **SQLAlchemy 2.0 Async Persistence** (`src/planpilot/db/`):
+  - Async models: `PlantRecord`, `ScheduleRecord`, `RuleRecord`, `JobRecord`.
+  - Document-style JSON snapshots of domain objects with atomic upserts via `session.merge()`.
+- [x] **FastAPI REST Application** (`src/planpilot/api/`):
   - Endpoints:
-    - `POST /plants`: upload/create plant
-    - `POST /orders`: add/update orders
-    - `POST /rules`: natural language rule -> validated DSL
-    - `POST /schedules`: submit async solve job
-    - `GET /jobs/{id}`: poll solve job status/result
-    - `POST /explain`: why is order late? / why did job move?
-    - `POST /scenarios/compare`: compare two schedules with AI recommendation
-    - `POST /onboarding`: upload messy CSVs -> readiness report + mapped plant
-    - `GET /health`: system health check
-  - API Key authentication header, request size limits, CORS, structured OpenAPI documentation.
-- [ ] Integration Tests:
-  - Full API integration tests using httpx `TestClient`.
+    - `GET /health`
+    - `POST /plants`, `GET /plants/{id}`
+    - `POST /orders`
+    - `POST /rules`, `GET /rules/{plant_id}`
+    - `POST /schedules` (async solve job submission)
+    - `GET /jobs/{id}` (polling job status and schedule)
+    - `POST /explain` (grounded explanation of lateness or schedule movement)
+    - `POST /scenarios/compare` (comparing schedules with AI recommendation)
+    - `POST /onboarding` (multipart CSV upload -> readiness report + plant creation)
+  - Production security: API Key authentication header (`X-API-Key`), 20MB payload limit middleware, and CORS configuration.
+- [x] **Integration Test Verification**:
+  - Full API integration tests covering plant creation, async scheduling & polling, scenario comparison, and onboarding uploads.
+  - 161 total tests passing. Ruff clean, mypy strict clean (47 source files checked with 0 errors).
+
+### Phase 6 Hard Verification Gate Output
+```
+tests/integration/test_api.py (5 tests) PASSED
+tests/integration/test_queue_worker.py (1 test) PASSED
+tests/integration/test_scenario_agent.py (2 tests) PASSED
+tests/unit/test_benchmarks.py (23 tests) PASSED
+tests/unit/test_citation_verifier.py (6 tests) PASSED
+tests/unit/test_domain.py (37 tests) PASSED
+tests/unit/test_erp_generator.py (3 tests) PASSED
+tests/unit/test_erp_injector.py (1 test) PASSED
+tests/unit/test_erp_mapper.py (2 tests) PASSED
+tests/unit/test_erp_profiler.py (1 test) PASSED
+tests/unit/test_erp_validators.py (5 tests) PASSED
+tests/unit/test_explain_agent.py (3 tests) PASSED
+tests/unit/test_explain_facts.py (6 tests) PASSED
+tests/unit/test_generator.py (11 tests) PASSED
+tests/unit/test_llm.py (8 tests) PASSED (1 live smoke deselected)
+tests/unit/test_onboarding_agent.py (2 tests) PASSED
+tests/unit/test_properties.py (1 test) PASSED
+tests/unit/test_rule_agent.py (4 tests) PASSED
+tests/unit/test_rule_compilers.py (10 tests) PASSED
+tests/unit/test_rule_store.py (4 tests) PASSED
+tests/unit/test_schedule_diff.py (2 tests) PASSED
+tests/unit/test_scheduler.py (11 tests) PASSED
+tests/unit/test_validator.py (13 tests) PASSED
+
+======================= 161 passed, 1 skipped in 29.85s =======================
+Ruff: All checks passed!
+Mypy: Success: no issues found in 47 source files
+```
+
+### Phase 7 Plan (Evaluation Harness)
+- [ ] Gold Evaluation Datasets:
+  - `evals/rules_gold.jsonl`: >= 60 NL rules with gold DSL output (synonyms, typos, ambiguous -> clarification, contradictory -> rejection).
+  - `evals/explain_cases.jsonl`: >= 25 lateness/move cases with known causes.
+  - `evals/erp_cases/`: >= 30 corrupted extract sets with ground-truth error labels.
+- [ ] Evaluation Harness Runner (`evals/harness.py`):
+  - Rule exact-match accuracy, schema-valid rate, clarification rate, rejection rate.
+  - Explanation faithfulness (citation verifier pass rate) and root cause accuracy.
+  - ERP mapping accuracy and error-detection precision/recall/F1.
+  - Latency p50/p95 and cost per task.
+- [ ] Output generation:
+  - Writes `results/*.json` and `results/SUMMARY.md`.
+  - Makefile target `make eval` to execute the full evaluation harness.
 
 ### Conventions
 - **src layout**: all code under `src/planpilot/`
