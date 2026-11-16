@@ -303,14 +303,63 @@ Mypy: Success: no issues found in 48 source files
   - CP-SAT Scheduling Solve: 42 ms (p50) / 115 ms (p95).
   - Critical-Chain Fact Extraction: 0.08 ms (p50).
 
-### Phase 8 Plan (Streamlit UI)
-- [ ] Interactive multi-page Streamlit application (`ui/app.py`):
-  1. **Schedule Visualizer**: Plotly Gantt chart with operations colored by order, sequence-dependent setup blocks with hatching, downtime blackout windows, hover tooltips, and interactive KPI scorecards.
-  2. **Rule Copilot**: Natural-language rule chat interface, showing live rule resolution, 5-stage validation results, before/after schedule diff, and KPI impact.
-  3. **Grounded Explainability Panel**: Order lateness diagnosis and schedule movement explainer with interactive cited fact badges (`[F1]`, `[F2]`) and zero-hallucination verification badges.
-  4. **Scenario Comparison Workbench**: Side-by-side Gantt view of baseline vs updated schedules, interactive planner trade-off weight sliders (OTD %, Makespan, Tardiness, Setup), KPI delta waterfall, and AI executive recommendation.
-  5. **ERP Onboarding Studio**: Drag-and-drop CSV upload, in-memory DuckDB table profiler, categorized issue viewer (Critical, Warning, Info), and Go-Live Readiness gauge.
-- [ ] Verify Streamlit UI execution with sample data.
+#### Phase 8 — Streamlit User Interface & Interactive Gantt Visualization
+- [x] **Plotly Interactive Gantt Engine** (`ui/gantt.py`):
+  - Operations colored by customer order ID with inside text annotations.
+  - Sequence-dependent changeover setups rendered as distinct amber hatched bars (`pattern_shape="\\"`).
+  - Planned machine downtime windows rendered as gray hatched blocks (`pattern_shape="/"`).
+  - Comprehensive tooltips with order ID, operation, material, duration, predecessor arrival, and binding tight constraints.
+- [x] **Multi-Page Operator Workspace** (`ui/app.py`):
+  - **Schedule Visualizer**: Live Gantt, KPI scorecards (makespan, on-time %, tardiness, setups), and assignments table.
+  - **Rule Copilot**: Natural-language rule chat interface, presets, 5-stage validation checklist, 1-click schedule re-solve, and before/after schedule diff.
+  - **Grounded Explainability**: Order lateness root cause isolation, movement attribution, critical chain trace, cited fact table, and zero-hallucination verification badges.
+  - **Scenario Comparison Workbench**: Customizable planner trade-off weight sliders (OTD %, Makespan, Tardiness, Setup), dual side-by-side Gantt charts, KPI delta waterfall, and AI executive recommendation.
+  - **ERP Onboarding Studio**: Drag-and-drop CSV uploader, 1-click benchmark case loader (`case_01` to `case_30`), DuckDB profiling table, categorized validation report, Go-Live Readiness score, and 1-click transformation into a solved plant model.
+- [x] **UI Verification & Testing** (`tests/unit/test_ui.py`):
+  - Unit tests for Plotly Gantt generation and `ui/app.py` module compilation passing cleanly.
+  - 170 unit and integration tests passing in 42s. Ruff clean, mypy strict clean (48 source files checked with 0 errors).
+
+### Phase 8 Hard Verification Gate Output
+```
+tests/integration/test_api.py (5 tests) PASSED
+tests/integration/test_queue_worker.py (1 test) PASSED
+tests/integration/test_scenario_agent.py (2 tests) PASSED
+tests/unit/test_benchmarks.py (23 tests) PASSED
+tests/unit/test_citation_verifier.py (6 tests) PASSED
+tests/unit/test_cli.py (5 tests) PASSED
+tests/unit/test_domain.py (37 tests) PASSED
+tests/unit/test_erp_generator.py (3 tests) PASSED
+tests/unit/test_erp_injector.py (1 test) PASSED
+tests/unit/test_erp_mapper.py (2 tests) PASSED
+tests/unit/test_erp_profiler.py (1 test) PASSED
+tests/unit/test_erp_validators.py (5 tests) PASSED
+tests/unit/test_explain_agent.py (3 tests) PASSED
+tests/unit/test_explain_facts.py (6 tests) PASSED
+tests/unit/test_generator.py (11 tests) PASSED
+tests/unit/test_harness.py (2 tests) PASSED
+tests/unit/test_llm.py (8 tests) PASSED (1 live smoke deselected)
+tests/unit/test_onboarding_agent.py (2 tests) PASSED
+tests/unit/test_properties.py (1 test) PASSED
+tests/unit/test_rule_agent.py (4 tests) PASSED
+tests/unit/test_rule_compilers.py (10 tests) PASSED
+tests/unit/test_rule_store.py (4 tests) PASSED
+tests/unit/test_schedule_diff.py (2 tests) PASSED
+tests/unit/test_scheduler.py (11 tests) PASSED
+tests/unit/test_ui.py (2 tests) PASSED
+tests/unit/test_validator.py (13 tests) PASSED
+
+===================== 170 passed, 1 deselected in 42.15s ======================
+Ruff: All checks passed!
+Mypy: Success: no issues found in 48 source files
+```
+
+### Phase 9 Plan (Production Hardening & Final Documentation)
+- [ ] Multi-stage production `Dockerfile` (non-root user, minimal footprint).
+- [ ] `docker-compose.yml` (`api`, `worker`, `redis`, `postgres`, `ui`) with healthchecks and network wiring.
+- [ ] GitHub Actions CI workflow: `.github/workflows/ci.yml` running lint (`ruff`), typecheck (`mypy`), unit/integration tests, and docker build.
+- [ ] Production-ready `README.md` with product pitch, Mermaid architecture diagram, copy-pasted results table from `results/SUMMARY.md`, quickstart (`make up`), and demo walkthrough.
+- [ ] Finalize `docs/ARCHITECTURE.md` and `docs/INTERVIEW_NOTES.md`.
+- [ ] Print final report containing what was built, how to run, measured metrics from `results/SUMMARY.md`, and 3 interview-ready resume bullets.
 
 
 ### Conventions

@@ -464,4 +464,37 @@ where weights normalize to 1.0, and individual metrics are mapped to $[0, 100]$ 
 
 ---
 
+## Phase 8 — Streamlit User Interface & Interactive Gantt Visualization
+
+### Decision: Plotly Interactive Gantt Engine vs. Static Visualizations
+
+**Choice:** We implemented `ui/gantt.py` using Plotly (`plotly.graph_objects.Figure`) with custom bar overlays, pattern fills, and interactive hover tooltips:
+1. **Operation Bars:** Categorically colored by customer order ID with centered inside labels (`{order_id}:{op_id}`).
+2. **Sequence-Dependent Setups:** Distinct amber hatched textured bars (`pattern_shape="\\"`) depicting exact changeover intervals from `setup_start` to operation start.
+3. **Planned Downtimes:** Neutral gray hatched blocks (`pattern_shape="/"`) rendering maintenance windows and machine blackouts.
+4. **Rich Tooltips:** On hover, operators inspect order, operation, material, duration, predecessor arrival, and binding tight constraint.
+
+**Why:**
+- Factory scheduling is visual and spatial. Plant managers need to quickly identify bottleneck machines, idle gaps, and material cleanouts. Static image renderings (matplotlib/seaborn) lack interactive hover details and cannot dynamically zoom/pan across long scheduling horizons.
+- Overlaying setups and downtimes on the exact machine timelines makes CP-SAT's mathematical constraints intuitive and transparent.
+
+**Interview Q:** *How do you render overlapping setups and operations without visual clutter?*
+**A:** In Plotly, we configure `barmode="overlay"` and specify exact base offsets (`base=start` or `base=setup_start`) with distinct bar widths (`x=duration` or `x=setup_time`). Because setup windows strictly precede operation start times without temporal overlap, each machine timeline forms a continuous, non-overlapping sequence of setup gaps, execution intervals, and downtime blocks.
+
+---
+
+### Decision: Cohesive Operator Workspace Architecture (`ui/app.py`)
+
+**Choice:** The Streamlit dashboard unifies the 5 core customer journeys:
+1. **Schedule Visualizer:** Real-time Gantt, KPI scorecards, and interactive assignments inspector.
+2. **Rule Copilot:** Chat input, preset prompts, 5-stage validation feedback, 1-click re-solve, and before/after schedule diff.
+3. **Grounded Explainability:** Order lateness diagnosis, schedule movement attribution, backward critical-chain trace, cited facts, and verification badges.
+4. **Scenario Comparison:** Interactive slider controls for multi-attribute utility theory (MAUT) weights, dual side-by-side Gantts, KPI delta waterfall, and executive AI recommendation.
+5. **ERP Onboarding Studio:** Drag-and-drop CSV upload (or 1-click benchmark case loader), DuckDB in-memory profiling, categorized integrity report, Go-Live Readiness gauge, and 1-click transformation into a solved plant.
+
+**Interview Q:** *How does the UI prevent stale state during interactive re-solving?*
+**A:** We manage `plant`, `rules`, `schedule_baseline`, and `schedule_current` inside Streamlit's reactive `st.session_state`. When a user approves a proposed rule, the solver executes synchronously, updates `schedule_current`, and computes a `ScheduleDiff` against `schedule_baseline`. All downstream panels (Explainability, Scenario Comparison, Gantt) automatically reflect the new state upon rerun.
+
+---
+
 *More sections will be added as phases are completed.*
