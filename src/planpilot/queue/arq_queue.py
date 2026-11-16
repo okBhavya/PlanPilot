@@ -15,9 +15,7 @@ class ArqJobQueue:
     """Production Redis-backed job queue implementation using arq."""
 
     def __init__(self, redis_url: str | None = None) -> None:
-        self.redis_url = redis_url or os.getenv(
-            "REDIS_URL", "redis://localhost:6379/0"
-        )
+        self.redis_url = redis_url or os.getenv("REDIS_URL", "redis://localhost:6379/0")
         self._pool: ArqRedis | None = None
 
     async def get_pool(self) -> ArqRedis:

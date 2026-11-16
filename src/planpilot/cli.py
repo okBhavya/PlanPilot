@@ -280,8 +280,7 @@ def onboard(
             typer.echo(f"Plant saved to {out_plant}")
     else:
         err_msg = (
-            f"\nOnboarding BLOCKED: {report.critical_count} "
-            f"critical error(s) must be resolved."
+            f"\nOnboarding BLOCKED: {report.critical_count} critical error(s) must be resolved."
         )
         typer.secho(err_msg, fg=typer.colors.RED, bold=True)
 

@@ -257,9 +257,7 @@ class RuleValidator:
         if isinstance(rule, HardDueDate):
             order = self.plant.order_by_id(rule.order_id)
             if order and order.release_time >= rule.deadline:
-                return (
-                    f"Hard due date ({rule.deadline}) <= release time ({order.release_time})"
-                )
+                return f"Hard due date ({rule.deadline}) <= release time ({order.release_time})"
 
         if isinstance(rule, OrderPrecedence) and rule.before_order_id == rule.after_order_id:
             return "Precedence cannot be established between an order and itself"

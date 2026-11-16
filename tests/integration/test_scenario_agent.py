@@ -12,9 +12,7 @@ def test_scenario_agent_compare() -> None:
 
     # Solve two schedules with different objectives or time limits
     sched_a = solve(plant, objective=ObjectiveType.MAKESPAN, time_limit_seconds=3.0)
-    sched_b = solve(
-        plant, objective=ObjectiveType.TOTAL_WEIGHTED_TARDINESS, time_limit_seconds=3.0
-    )
+    sched_b = solve(plant, objective=ObjectiveType.TOTAL_WEIGHTED_TARDINESS, time_limit_seconds=3.0)
 
     agent = ScenarioAgent()
     comp = agent.compare(sched_a, sched_b)

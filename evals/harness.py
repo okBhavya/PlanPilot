@@ -180,12 +180,10 @@ def evaluate_rules(
                                 break
                         if match:
                             exact_match += 1
-            elif exp_action == "clarification":
-                if resp.status == "clarification_needed":
-                    correct_clarification += 1
-            elif exp_action == "rejection":
-                if resp.status in ["rejected", "clarification_needed"]:
-                    correct_rejection += 1
+            elif exp_action == "clarification" and resp.status == "clarification_needed":
+                correct_clarification += 1
+            elif exp_action == "rejection" and resp.status in ["rejected", "clarification_needed"]:
+                correct_rejection += 1
 
         rule_acc = exact_match / num_rules_expected if num_rules_expected else 1.0
         schema_rate = schema_valid / num_rules_expected if num_rules_expected else 1.0
@@ -277,7 +275,11 @@ def evaluate_explain(explain_path: Path) -> dict[str, Any]:
     facts0 = d0.facts
 
     # Grounded answer (should pass)
-    grounded_text = f"Order {d0.order_id} completed at {d0.completion_time} [F1]. The due date was {d0.due_date} [F2]."
+    c_time = d0.completion_time
+    d_date = d0.due_date
+    grounded_text = (
+        f"Order {d0.order_id} completed at {c_time} [F1]. The due date was {d_date} [F2]."
+    )
     v_grounded = verifier.verify(grounded_text, facts0)
 
     # Uncited answer (should fail)
@@ -446,7 +448,7 @@ def generate_summary_markdown(
         "| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |",
     ]
 
-    for model_name, m_res in rules_data.items():
+    for _model_name, m_res in rules_data.items():
         lines.append(
             f"| **{m_res['model']}** | {m_res['provider']} | "
             f"**{m_res['rule_exact_match_accuracy']}%** | {m_res['schema_valid_rate']}% | "

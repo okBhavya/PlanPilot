@@ -10,8 +10,8 @@
   "f1_score": 100.0,
   "clean_instances_mapped_successfully": 4,
   "clean_instances_solved_to_optimal": 4,
-  "latency_p50_ms": 120.11,
-  "latency_p95_ms": 287.93,
+  "latency_p50_ms": 62.37,
+  "latency_p95_ms": 94.37,
   "per_defect_summary": {
     "dangling_work_center": {
       "tp": 10,

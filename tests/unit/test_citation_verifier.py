@@ -101,8 +101,7 @@ class TestCitationVerifier:
     def test_sentence_splitting_with_abbreviations_and_numbers(self) -> None:
         """Sentence splitter correctly separates sentences without breaking on decimals."""
         text = (
-            "Fact 1 says completion was at 2.5 hours [F1]. "
-            "Fact 2 notes order ORD1 was late [F2]."
+            "Fact 1 says completion was at 2.5 hours [F1]. Fact 2 notes order ORD1 was late [F2]."
         )
         sentences = CitationVerifier.split_sentences(text)
         assert len(sentences) == 2

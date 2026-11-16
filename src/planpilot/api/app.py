@@ -73,9 +73,7 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
         super().__init__(app)
         self.max_size_bytes = max_size_bytes
 
-    async def dispatch(
-        self, request: Request, call_next: RequestResponseEndpoint
-    ) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         content_length = request.headers.get("content-length")
         if content_length and int(content_length) > self.max_size_bytes:
             return Response(
@@ -339,11 +337,7 @@ async def get_job_status(
         if not record:
             raise HTTPException(status_code=404, detail=f"Job '{job_id}' not found")
 
-        sched = (
-            Schedule.model_validate_json(record.result_json)
-            if record.result_json
-            else None
-        )
+        sched = Schedule.model_validate_json(record.result_json) if record.result_json else None
         return JobResponse(
             job_id=record.id,
             status=record.status,
@@ -406,9 +400,7 @@ async def explain_schedule(
     agent = ExplainAgent(llm_client=LLMClient())
 
     if req.order_id:
-        ans = agent.explain_lateness(
-            schedule=schedule, plant=plant, order_id=req.order_id
-        )
+        ans = agent.explain_lateness(schedule=schedule, plant=plant, order_id=req.order_id)
         return ExplainResponse(
             question=f"Why is order {req.order_id} late?",
             explanation=ans.explanation,
@@ -416,25 +408,17 @@ async def explain_schedule(
             cited_fact_ids=[f.id for f in ans.facts],
         )
     elif req.previous_schedule_id:
-        prev_sched: Schedule | None = _in_memory_schedules.get(
-            req.previous_schedule_id
-        )
+        prev_sched: Schedule | None = _in_memory_schedules.get(req.previous_schedule_id)
         if not prev_sched:
-            stmt = select(ScheduleRecord).where(
-                ScheduleRecord.id == req.previous_schedule_id
-            )
+            stmt = select(ScheduleRecord).where(ScheduleRecord.id == req.previous_schedule_id)
             res = await session.execute(stmt)
             record = res.scalar_one_or_none()
             if not record:
-                raise HTTPException(
-                    status_code=404, detail="Previous schedule not found"
-                )
+                raise HTTPException(status_code=404, detail="Previous schedule not found")
             prev_sched = Schedule.model_validate_json(record.schedule_json)
             _in_memory_schedules[prev_sched.id] = prev_sched
 
-        ans = agent.explain_schedule_diff(
-            before=prev_sched, after=schedule, plant=plant
-        )
+        ans = agent.explain_schedule_diff(before=prev_sched, after=schedule, plant=plant)
         return ExplainResponse(
             question="Why did jobs move between schedules?",
             explanation=ans.explanation,
@@ -442,9 +426,7 @@ async def explain_schedule(
             cited_fact_ids=[f.id for f in ans.facts],
         )
 
-    raise HTTPException(
-        status_code=400, detail="Must provide order_id or previous_schedule_id"
-    )
+    raise HTTPException(status_code=400, detail="Must provide order_id or previous_schedule_id")
 
 
 @app.post(
@@ -523,11 +505,7 @@ async def onboard_erp_files(
                 detail=f"Failed to parse CSV file '{f.filename}': {e}",
             ) from e
 
-    fmt = (
-        ERPFormat.SAP
-        if format_type.lower() == "sap"
-        else ERPFormat.LEGACY
-    )
+    fmt = ERPFormat.SAP if format_type.lower() == "sap" else ERPFormat.LEGACY
     agent = OnboardingAgent(tables=tables, format_type=fmt)
 
     agent.validate_dataset()

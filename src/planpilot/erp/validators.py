@@ -117,9 +117,7 @@ class DeterministicValidator:
             if tbl in tables and col in tables[tbl].columns:
                 df = tables[tbl]
                 for row_idx, val in enumerate(df[col]):
-                    if isinstance(val, str) and (
-                        val != val.strip() or re.search(r"\s{2,}", val)
-                    ):
+                    if isinstance(val, str) and (val != val.strip() or re.search(r"\s{2,}", val)):
                         errors.append(
                             ValidationError(
                                 error_type=InjectedErrorType.WHITESPACE_CASE_INCONSISTENT,
@@ -317,9 +315,7 @@ class DeterministicValidator:
         # 9. Check Mixed Date Formats
         if order_table in tables:
             df_o = tables[order_table]
-            date_cols = [
-                c for c in [order_start_col, order_due_col] if c in df_o.columns
-            ]
+            date_cols = [c for c in [order_start_col, order_due_col] if c in df_o.columns]
             iso_pattern = re.compile(r"^\d{4}-\d{2}-\d{2}$")
             for col in date_cols:
                 for row_idx, val in enumerate(df_o[col]):
@@ -342,20 +338,13 @@ class DeterministicValidator:
         con.close()
 
         # Compute summary counts & readiness score
-        critical_count = sum(
-            1 for e in errors if e.severity == ErrorSeverity.CRITICAL
-        )
-        warning_count = sum(
-            1 for e in errors if e.severity == ErrorSeverity.WARNING
-        )
+        critical_count = sum(1 for e in errors if e.severity == ErrorSeverity.CRITICAL)
+        warning_count = sum(1 for e in errors if e.severity == ErrorSeverity.WARNING)
         info_count = sum(1 for e in errors if e.severity == ErrorSeverity.INFO)
 
         score = max(
             0.0,
-            1.0
-            - (0.25 * critical_count)
-            - (0.05 * warning_count)
-            - (0.01 * info_count),
+            1.0 - (0.25 * critical_count) - (0.05 * warning_count) - (0.01 * info_count),
         )
 
         return ValidationReport(

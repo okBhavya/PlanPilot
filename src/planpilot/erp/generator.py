@@ -28,12 +28,12 @@ class SAPExtractGenerator:
         work_centers: list[dict[str, Any]] = []
         for i in range(num_work_centers):
             wc_type = wc_types[i % len(wc_types)]
-            arbpl = f"WC-{wc_type}-{i+1:02d}"
+            arbpl = f"WC-{wc_type}-{i + 1:02d}"
             work_centers.append(
                 {
                     "ARBPL": arbpl,
                     "WERKS": "1000",
-                    "KTEXT": f"Machining Center {wc_type} #{i+1}",
+                    "KTEXT": f"Machining Center {wc_type} #{i + 1}",
                     "KAPAR": "001",
                     "ANZMA": 1,
                 }
@@ -47,7 +47,7 @@ class SAPExtractGenerator:
 
         # Finished Goods (FERT)
         for i in range(num_products):
-            matnr = f"MAT-PROD-{i+1:03d}"
+            matnr = f"MAT-PROD-{i + 1:03d}"
             product_ids.append(matnr)
             materials.append(
                 {
@@ -55,13 +55,13 @@ class SAPExtractGenerator:
                     "WERKS": "1000",
                     "MTART": "FERT",
                     "MEINS": "PCE",
-                    "MAKTX": f"Finished Product Alpha {i+1}",
+                    "MAKTX": f"Finished Product Alpha {i + 1}",
                 }
             )
 
         # Raw Materials (ROH) / Components (HALB)
         for i in range(num_components):
-            matnr = f"MAT-COMP-{i+1:03d}"
+            matnr = f"MAT-COMP-{i + 1:03d}"
             component_ids.append(matnr)
             mtart = "HALB" if i % 2 == 0 else "ROH"
             materials.append(
@@ -70,7 +70,7 @@ class SAPExtractGenerator:
                     "WERKS": "1000",
                     "MTART": mtart,
                     "MEINS": "PCE" if mtart == "HALB" else "KG",
-                    "MAKTX": f"Component Material {i+1}",
+                    "MAKTX": f"Component Material {i + 1}",
                 }
             )
         df_mara = pd.DataFrame(materials)
@@ -78,7 +78,7 @@ class SAPExtractGenerator:
         # 3. Routings & Operations (PLKO / PLPO)
         routings: list[dict[str, Any]] = []
         for i, prod_id in enumerate(product_ids):
-            plnnr = f"ROUT-{i+1:04d}"
+            plnnr = f"ROUT-{i + 1:04d}"
             # Each product has 2 to 3 sequential operations
             num_ops = 2 + (i % 2)
             for op_idx in range(num_ops):
@@ -105,11 +105,9 @@ class SAPExtractGenerator:
         # 4. Bill of Materials (MAST / STPO)
         boms: list[dict[str, Any]] = []
         for i, prod_id in enumerate(product_ids):
-            stlnr = f"BOM-{i+1:04d}"
+            stlnr = f"BOM-{i + 1:04d}"
             # Each product requires 1 to 2 components (strictly acyclic)
-            assigned_comps = [
-                component_ids[(i + c) % len(component_ids)] for c in range(2)
-            ]
+            assigned_comps = [component_ids[(i + c) % len(component_ids)] for c in range(2)]
             for comp_id in assigned_comps:
                 boms.append(
                     {
@@ -125,7 +123,7 @@ class SAPExtractGenerator:
         # 5. Production Orders (AFKO / AFPO)
         orders: list[dict[str, Any]] = []
         for i in range(num_orders):
-            aufnr = f"ORD-{i+1:05d}"
+            aufnr = f"ORD-{i + 1:05d}"
             prod_id = product_ids[i % len(product_ids)]
             qty = self.rng.choice([10.0, 25.0, 50.0, 100.0])
             start_day = i * 2
@@ -136,8 +134,8 @@ class SAPExtractGenerator:
                     "MATNR": prod_id,
                     "GAMNG": qty,
                     "GMEIN": "PCE",
-                    "GSTRP": f"2026-11-{start_day+1:02d}",
-                    "GLTRP": f"2026-11-{due_day+1:02d}",
+                    "GSTRP": f"2026-11-{start_day + 1:02d}",
+                    "GLTRP": f"2026-11-{due_day + 1:02d}",
                     "DISPO": "100",  # MRP controller / priority
                 }
             )

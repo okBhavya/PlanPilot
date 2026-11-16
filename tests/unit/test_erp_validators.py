@@ -75,9 +75,7 @@ def test_circular_bom_detection() -> None:
     validator = DeterministicValidator()
     report = validator.validate(tables, is_sap=True)
 
-    circular_errs = [
-        e for e in report.errors if e.error_type == InjectedErrorType.CIRCULAR_BOM
-    ]
+    circular_errs = [e for e in report.errors if e.error_type == InjectedErrorType.CIRCULAR_BOM]
     assert len(circular_errs) == 1
     assert circular_errs[0].severity == ErrorSeverity.CRITICAL
     assert "MAT-A -> MAT-B -> MAT-C -> MAT-A" in circular_errs[0].message

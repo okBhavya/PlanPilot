@@ -64,9 +64,7 @@ class ScenarioAgent:
         self.weights = weights or ScenarioWeights()
         self.llm_client = llm_client
 
-    def compare(
-        self, schedule_a: Schedule, schedule_b: Schedule
-    ) -> ScenarioComparison:
+    def compare(self, schedule_a: Schedule, schedule_b: Schedule) -> ScenarioComparison:
         """Deterministically compare two schedules and synthesize an explainable recommendation."""
         diff = KPIDiff.calculate(schedule_a.kpis, schedule_b.kpis)
 
@@ -129,9 +127,7 @@ class ScenarioAgent:
             )
 
         if diff.makespan_delta < 0:
-            trade_offs.append(
-                f"Schedule B finishes {abs(diff.makespan_delta)} minutes faster."
-            )
+            trade_offs.append(f"Schedule B finishes {abs(diff.makespan_delta)} minutes faster.")
         elif diff.makespan_delta > 0:
             trade_offs.append(
                 f"Schedule A completes the entire horizon {diff.makespan_delta} minutes faster."

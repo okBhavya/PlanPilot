@@ -207,11 +207,7 @@ class ERPMapper:
                 mat_raw = str(row.get(mat_col, "")).strip().upper()
                 if not mat_raw:
                     continue
-                name = (
-                    str(row.get(name_col, mat_raw))
-                    if name_col in row
-                    else mat_raw
-                )
+                name = str(row.get(name_col, mat_raw)) if name_col in row else mat_raw
                 materials.append(
                     Material(
                         id=mat_raw,
@@ -291,17 +287,11 @@ class ERPMapper:
             grouped_bom = df_b.groupby(b_col)
             for b_id_raw, group in grouped_bom:
                 b_id = str(b_id_raw).strip().upper()
-                parent_id = (
-                    str(group.iloc[0].get(p_col, "")).strip().upper()
-                )
+                parent_id = str(group.iloc[0].get(p_col, "")).strip().upper()
                 components: list[BOMComponent] = []
                 for _, row in group.iterrows():
                     child_id = str(row.get(c_col, "")).strip().upper()
-                    qty = (
-                        float(row.get(q_col, 1.0))
-                        if pd.notna(row.get(q_col))
-                        else 1.0
-                    )
+                    qty = float(row.get(q_col, 1.0)) if pd.notna(row.get(q_col)) else 1.0
                     components.append(
                         BOMComponent(
                             material_id=child_id,
@@ -325,15 +315,9 @@ class ERPMapper:
             qty_col = inv_order.get("quantity", "GAMNG")
 
             for ord_idx, (_, row) in enumerate(df_o.iterrows()):
-                ord_id = str(
-                    row.get(ord_col, f"ORD-{ord_idx+1:03d}")
-                ).strip().upper()
+                ord_id = str(row.get(ord_col, f"ORD-{ord_idx + 1:03d}")).strip().upper()
                 prod_id = str(row.get(prod_col, "")).strip().upper()
-                qty = (
-                    float(row.get(qty_col, 10.0))
-                    if pd.notna(row.get(qty_col))
-                    else 10.0
-                )
+                qty = float(row.get(qty_col, 10.0)) if pd.notna(row.get(qty_col)) else 10.0
                 # Find matching routing
                 matching_routing = next(
                     (r for r in routings if r.product_material_id == prod_id),

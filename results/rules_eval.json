@@ -8,8 +8,8 @@
     "clarification_rate": 100.0,
     "rejection_rate": 100.0,
     "overall_accuracy": 92.31,
-    "latency_p50_ms": 2.9,
-    "latency_p95_ms": 7.76,
+    "latency_p50_ms": 10.05,
+    "latency_p95_ms": 15.45,
     "avg_cost_usd_per_query": 0.002175
   },
   "claude-3-5-sonnet-20241022": {
@@ -21,8 +21,8 @@
     "clarification_rate": 100.0,
     "rejection_rate": 100.0,
     "overall_accuracy": 92.31,
-    "latency_p50_ms": 2.86,
-    "latency_p95_ms": 5.43,
+    "latency_p50_ms": 9.59,
+    "latency_p95_ms": 14.24,
     "avg_cost_usd_per_query": 0.002175
   },
   "llama3": {
@@ -34,8 +34,8 @@
     "clarification_rate": 100.0,
     "rejection_rate": 100.0,
     "overall_accuracy": 87.69,
-    "latency_p50_ms": 2.78,
-    "latency_p95_ms": 4.73,
+    "latency_p50_ms": 20.09,
+    "latency_p95_ms": 54.37,
     "avg_cost_usd_per_query": 0.002175
   }
 }

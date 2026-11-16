@@ -7,17 +7,17 @@
 
 | Model | Provider | Exact Match Acc | Schema Valid Rate | Clarification Rate | Rejection Rate | Latency (p50) | Latency (p95) | Cost/Query |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **gpt-4o** | openai | **90.91%** | 100.0% | 100.0% | 100.0% | 2.9 ms | 7.76 ms | $0.002175 |
-| **claude-3-5-sonnet-20241022** | anthropic | **90.91%** | 100.0% | 100.0% | 100.0% | 2.86 ms | 5.43 ms | $0.002175 |
-| **llama3** | openai_compatible | **85.45%** | 94.55% | 100.0% | 100.0% | 2.78 ms | 4.73 ms | $0.002175 |
+| **gpt-4o** | openai | **90.91%** | 100.0% | 100.0% | 100.0% | 10.05 ms | 15.45 ms | $0.002175 |
+| **claude-3-5-sonnet-20241022** | anthropic | **90.91%** | 100.0% | 100.0% | 100.0% | 9.59 ms | 14.24 ms | $0.002175 |
+| **llama3** | openai_compatible | **85.45%** | 94.55% | 100.0% | 100.0% | 20.09 ms | 54.37 ms | $0.002175 |
 
 ## 2. Grounded Explainability & Critical-Chain Diagnosis (`evals/explain_cases.jsonl`, N=25)
 
 | Evaluation Task | Target Cases | Measured Accuracy / Pass Rate | Latency (p50) |
 | :--- | :---: | :---: | :---: |
-| **Lateness Root Cause Identification** | 15 cases | **100.0%** | 0.11 ms |
-| **Schedule Movement Attribution** | 10 cases | **100.0%** | 0.11 ms |
-| **Overall Cause Attribution** | 25 cases | **100.0%** | 0.11 ms |
+| **Lateness Root Cause Identification** | 15 cases | **100.0%** | 0.03 ms |
+| **Schedule Movement Attribution** | 10 cases | **100.0%** | 0.03 ms |
+| **Overall Cause Attribution** | 25 cases | **100.0%** | 0.03 ms |
 | **Citation Verifier Pass Rate (Faithful)** | Zero-hallucination guard | **100.0%** | < 1 ms |
 | **Citation Verifier Rejection (Hallucinations)** | Adversarial invalid tests | **100.0%** | < 1 ms |
 
@@ -29,7 +29,7 @@
 | **Defect Detection Recall** | $\ge 85.0\%$ | **100.0%** | PASSED |
 | **Defect Detection F1 Score** | $\ge 85.0\%$ | **100.0%** | PASSED |
 | **Clean Cases Mapped & Solved** | 100% | **4/4 (100%)** | PASSED |
-| **DuckDB In-Memory Validation Latency** | < 500 ms | **120.11 ms (p50) / 287.93 ms (p95)** | PASSED |
+| **DuckDB In-Memory Validation Latency** | < 500 ms | **62.37 ms (p50) / 94.37 ms (p95)** | PASSED |
 
 ## 4. Key Highlights & Takeaways
 

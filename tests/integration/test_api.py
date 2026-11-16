@@ -122,9 +122,7 @@ async def test_api_scenario_comparison() -> None:
     plant = PlantGenerator(num_orders=3, num_machines=2, seed=42).generate(plant_id="PLANT-API-03")
 
     sched_a = solve(plant, objective=ObjectiveType.MAKESPAN, time_limit_seconds=2.0)
-    sched_b = solve(
-        plant, objective=ObjectiveType.TOTAL_WEIGHTED_TARDINESS, time_limit_seconds=2.0
-    )
+    sched_b = solve(plant, objective=ObjectiveType.TOTAL_WEIGHTED_TARDINESS, time_limit_seconds=2.0)
 
     transport = ASGITransport(app=app)
     async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:

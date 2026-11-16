@@ -75,9 +75,7 @@ class ErrorInjector:
                 "MEINS" if is_sap else "unit": "PCE",
             }
             new_row_idx = len(df)
-            corrupted[bom_table] = pd.concat(
-                [df, pd.DataFrame([cycle_row])], ignore_index=True
-            )
+            corrupted[bom_table] = pd.concat([df, pd.DataFrame([cycle_row])], ignore_index=True)
             ground_truth.append(
                 InjectedError(
                     error_type=InjectedErrorType.CIRCULAR_BOM,
@@ -136,9 +134,7 @@ class ErrorInjector:
             row_idx = 3 if len(df) > 3 else 0
             dup_row = copy.deepcopy(df.iloc[row_idx].to_dict())
             new_row_idx = len(df)
-            corrupted[routing_table] = pd.concat(
-                [df, pd.DataFrame([dup_row])], ignore_index=True
-            )
+            corrupted[routing_table] = pd.concat([df, pd.DataFrame([dup_row])], ignore_index=True)
             key_cols = "PLNNR, VORNR" if is_sap else "routing_id, op_seq"
             ground_truth.append(
                 InjectedError(

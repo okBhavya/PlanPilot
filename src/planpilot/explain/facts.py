@@ -374,10 +374,12 @@ class FactExtractor:
 
             # Check 4: Was release time the binding bottleneck?
             if (
-                tight == TightConstraint.RELEASE_TIME
-                or (curr_asst == order_assts[0] and curr_asst.start == order.release_time)
-            ) and order.release_time > 0 and (due_date - order.release_time) < sum(
-                a.processing_time for a in order_assts
+                (
+                    tight == TightConstraint.RELEASE_TIME
+                    or (curr_asst == order_assts[0] and curr_asst.start == order.release_time)
+                )
+                and order.release_time > 0
+                and (due_date - order.release_time) < sum(a.processing_time for a in order_assts)
             ):
                 root_cause_type = "release_delay"
                 root_cause_desc = (

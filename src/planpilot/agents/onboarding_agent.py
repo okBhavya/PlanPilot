@@ -134,9 +134,7 @@ class OnboardingAgent:
             ),
         ]
 
-    def _execute_tool(
-        self, tool_name: str, args: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _execute_tool(self, tool_name: str, args: dict[str, Any]) -> dict[str, Any]:
         """Execute tool deterministically."""
         if tool_name == "inspect_tables":
             profile = self.profiler.profile_all(self.tables)
@@ -195,13 +193,9 @@ class OnboardingAgent:
             }
 
         elif tool_name == "generate_readiness_report":
-            summary = args.get(
-                "executive_summary", "Automated Readiness Report"
-            )
+            summary = args.get("executive_summary", "Automated Readiness Report")
             recs = args.get("recommendations", [])
-            readiness = self.build_readiness_report(
-                summary=summary, recommendations=recs
-            )
+            readiness = self.build_readiness_report(summary=summary, recommendations=recs)
             return {
                 "status": readiness.status.value,
                 "readiness_score": readiness.readiness_score,
@@ -229,31 +223,21 @@ class OnboardingAgent:
         if report.critical_count > 0:
             status = GoLiveStatus.BLOCKED
             if not recs:
-                recs.append(
-                    "Resolve all critical schema and referential errors before scheduling."
-                )
+                recs.append("Resolve all critical schema and referential errors before scheduling.")
         elif report.warning_count > 0:
             status = GoLiveStatus.ACTION_REQUIRED
             if not recs:
-                recs.append(
-                    "Review warnings (e.g. non-standard time units or mixed date formats)."
-                )
+                recs.append("Review warnings (e.g. non-standard time units or mixed date formats).")
         else:
             status = GoLiveStatus.READY
             if not recs:
-                recs.append(
-                    "Data passes all checks and is ready for production scheduling."
-                )
+                recs.append("Data passes all checks and is ready for production scheduling.")
 
         table_counts = {name: len(df) for name, df in self.tables.items()}
         total_records = sum(table_counts.values())
 
-        critical_errs = [
-            e for e in report.errors if e.severity == ErrorSeverity.CRITICAL
-        ]
-        warning_errs = [
-            e for e in report.errors if e.severity == ErrorSeverity.WARNING
-        ]
+        critical_errs = [e for e in report.errors if e.severity == ErrorSeverity.CRITICAL]
+        warning_errs = [e for e in report.errors if e.severity == ErrorSeverity.WARNING]
 
         md_lines = [
             f"# ERP Data Onboarding Readiness Report: **{status.value.upper()}**",
@@ -277,21 +261,15 @@ class OnboardingAgent:
         if critical_errs:
             md_lines.extend(["### 🚨 Critical Issues (Must Fix)"])
             for ce in critical_errs[:5]:
-                md_lines.append(
-                    f"- **[{ce.error_type.value}]** Table `{ce.table}`: {ce.message}"
-                )
+                md_lines.append(f"- **[{ce.error_type.value}]** Table `{ce.table}`: {ce.message}")
             if len(critical_errs) > 5:
-                md_lines.append(
-                    f"- *...and {len(critical_errs) - 5} more critical issues.*"
-                )
+                md_lines.append(f"- *...and {len(critical_errs) - 5} more critical issues.*")
             md_lines.append("")
 
         if warning_errs:
             md_lines.extend(["### ⚠️ Warnings"])
             for we in warning_errs[:5]:
-                md_lines.append(
-                    f"- **[{we.error_type.value}]** Table `{we.table}`: {we.message}"
-                )
+                md_lines.append(f"- **[{we.error_type.value}]** Table `{we.table}`: {we.message}")
             md_lines.append("")
 
         md_lines.extend(["## Recommendations"])
@@ -334,8 +312,7 @@ class OnboardingAgent:
         tools = self.get_tool_definitions()
         # Encapsulate user prompt to prevent prompt injection
         safe_user_prompt = (
-            f"<ERP_DATA>\n{user_prompt}\n</ERP_DATA>\n"
-            "Please onboard and evaluate this data."
+            f"<ERP_DATA>\n{user_prompt}\n</ERP_DATA>\nPlease onboard and evaluate this data."
         )
 
         messages: list[dict[str, Any]] = [

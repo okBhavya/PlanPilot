@@ -24,9 +24,7 @@ def execute_solve_job(payload: dict[str, Any]) -> dict[str, Any]:
     plant = Plant.model_validate(plant_data)
 
     rules_data = payload.get("rules", [])
-    rules: list[Rule] = (
-        [_rule_adapter.validate_python(r) for r in rules_data] if rules_data else []
-    )
+    rules: list[Rule] = [_rule_adapter.validate_python(r) for r in rules_data] if rules_data else []
 
     time_limit = float(payload.get("time_limit_seconds", 10.0))
     obj_str = payload.get("objective", "makespan")

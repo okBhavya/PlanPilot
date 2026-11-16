@@ -16,9 +16,7 @@ class MemoryJobQueue:
 
     def __init__(self) -> None:
         self._jobs: dict[str, JobInfo] = {}
-        self._handlers: dict[
-            str, Callable[[dict[str, Any]], Coroutine[Any, Any, Any]]
-        ] = {}
+        self._handlers: dict[str, Callable[[dict[str, Any]], Coroutine[Any, Any, Any]]] = {}
 
     def register_handler(
         self,

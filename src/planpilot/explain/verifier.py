@@ -92,9 +92,7 @@ class CitationVerifier:
             clean_sentence = re.sub(r"\b[A-Za-z]+[-_]?\d+\b", "", clean_sentence)
 
             # Find all remaining standalone numbers
-            sentence_numbers = [
-                float(n) for n in re.findall(r"\b\d+(?:\.\d+)?\b", clean_sentence)
-            ]
+            sentence_numbers = [float(n) for n in re.findall(r"\b\d+(?:\.\d+)?\b", clean_sentence)]
 
             # Pool all numbers from valid cited facts
             allowed_numbers: set[float] = set()

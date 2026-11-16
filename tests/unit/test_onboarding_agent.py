@@ -91,9 +91,7 @@ def test_onboarding_agent_tool_calling() -> None:
         turn4_response,
     ]
 
-    agent = OnboardingAgent(
-        clean_data, format_type=ERPFormat.SAP, llm_client=mock_llm
-    )
+    agent = OnboardingAgent(clean_data, format_type=ERPFormat.SAP, llm_client=mock_llm)
     report = agent.run_agentic_onboarding("Please check these SAP tables.")
 
     assert report.status == GoLiveStatus.READY
