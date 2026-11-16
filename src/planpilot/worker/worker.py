@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import os
 from typing import Any
 
+from arq.connections import RedisSettings
 from pydantic import TypeAdapter
 
 from planpilot.domain.models import ObjectiveType, Plant
@@ -11,11 +13,6 @@ from planpilot.rules.dsl import Rule
 from planpilot.solver.scheduler import solve
 
 _rule_adapter = TypeAdapter(Rule)
-
-
-async def solve_schedule_task(ctx: Any, payload: dict[str, Any]) -> dict[str, Any]:
-    """Worker task executed by arq or background runners."""
-    return execute_solve_job(payload)
 
 
 def execute_solve_job(payload: dict[str, Any]) -> dict[str, Any]:
@@ -28,9 +25,7 @@ def execute_solve_job(payload: dict[str, Any]) -> dict[str, Any]:
 
     rules_data = payload.get("rules", [])
     rules: list[Rule] = (
-        [_rule_adapter.validate_python(r) for r in rules_data]
-        if rules_data
-        else []
+        [_rule_adapter.validate_python(r) for r in rules_data] if rules_data else []
     )
 
     time_limit = float(payload.get("time_limit_seconds", 10.0))
@@ -49,3 +44,15 @@ def execute_solve_job(payload: dict[str, Any]) -> dict[str, Any]:
     )
 
     return schedule.model_dump(mode="json")
+
+
+async def solve_schedule_task(ctx: Any, payload: dict[str, Any]) -> dict[str, Any]:
+    """Worker task executed by arq or background runners."""
+    return execute_solve_job(payload)
+
+
+class WorkerSettings:
+    """Settings for the arq background worker process."""
+
+    functions = [solve_schedule_task]
+    redis_settings = RedisSettings.from_dsn(os.getenv("REDIS_URL", "redis://localhost:6379"))

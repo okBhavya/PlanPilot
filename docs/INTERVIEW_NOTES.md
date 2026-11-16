@@ -497,4 +497,47 @@ where weights normalize to 1.0, and individual metrics are mapped to $[0, 100]$ 
 
 ---
 
-*More sections will be added as phases are completed.*
+## Phase 9 — Production Hardening & CI/CD Packaging
+
+### Decision: Multi-Stage Dockerfile with Least-Privilege Execution
+
+**Choice:**
+1. **Builder Stage (`python:3.12-slim`):** Installs compiler tools (`build-essential`, `curl`) and provisions an isolated virtual environment at `/opt/venv` using `uv`.
+2. **Runner Stage (`python:3.12-slim`):** Discards build tools and compilers. Copies only `/opt/venv` and application code.
+3. **Non-Root User:** Creates an explicit system user (`planpilot`, UID/GID 1000) and executes all server and UI processes under this unprivileged user.
+
+**Why:**
+- Production container security requires minimal image sizes and restricted attack surfaces. Compilers (`gcc`, `make`) in runtime containers represent critical vulnerabilities if a remote code execution exploit occurs.
+- Running as non-root prevents container breakout attacks and conforms to enterprise Kubernetes security admission policies (`runAsNonRoot: true`).
+
+**Interview Q:** *Why use `uv` inside Docker instead of standard `pip`?*
+**A:** `uv` reduces container dependency resolution time by 10x (from minutes to under 5 seconds) and provides deterministic lockfile resolution. By utilizing `uv` in the builder stage, image build times are minimized while maintaining strict dependency reproducibility.
+
+---
+
+### Decision: Production Docker Compose Orchestration with Healthchecks
+
+**Choice:** `docker-compose.yml` models a real-world microservice topology:
+- `postgres`: PostgreSQL 16 with native `pg_isready` healthcheck.
+- `redis`: Redis 7-alpine with `redis-cli ping` healthcheck.
+- `api`: FastAPI backend with `curl -f /health` check, depending on healthy postgres and redis.
+- `worker`: Background CP-SAT solving service via `arq`, subscribing to Redis.
+- `ui`: Streamlit operator dashboard wired to the internal network.
+
+**Why:**
+- In production, services must not start until their dependencies are genuinely ready to accept connections. Using Docker Compose `condition: service_healthy` prevents race conditions where FastAPI or the worker attempts database connections before PostgreSQL finishes socket initialization.
+
+---
+
+### Decision: Zero-Key CI Pipeline Architecture (`.github/workflows/ci.yml`)
+
+**Choice:** GitHub Actions executes four automated verification jobs:
+1. `lint`: `ruff check` on all codebases (`src/`, `tests/`, `ui/`, `evals/`).
+2. `typecheck`: `mypy --strict src/planpilot/` ensuring 100% static type safety across 48 modules.
+3. `test`: `pytest tests/ -m "not live and not smoke"` running 170 unit and integration tests.
+4. `eval-smoke`: Runs `python -m planpilot.cli eval` offline using committed on-disk response caches (`.cache/llm/`).
+5. `docker-build`: Tests container buildability.
+
+**Interview Q:** *How do you run LLM evaluations in CI without leaking API keys or paying API bills?*
+**A:** Every prompt in the benchmark dataset is hashed with SHA256 and matched against an on-disk response cache (`.cache/llm/`). In CI, the `LLMClient` operates in cache-only mode: cache hits return stored tool calls and tokens instantly with zero latency, zero cost, and zero API credentials required. This makes CI deterministic, reproducible, and completely free.
+

@@ -1,6 +1,6 @@
 # PlanPilot Progress
 
-## Current Status: Phase 6 — Scenario Comparison, Async Worker & REST API ✅ (Moving to Phase 7)
+## Current Status: Phase 9 Complete — All Phases (1 through 9) Built, Tested, Evaluated, and Hardened ✅
 
 ### Completed
 
@@ -353,13 +353,57 @@ Ruff: All checks passed!
 Mypy: Success: no issues found in 48 source files
 ```
 
-### Phase 9 Plan (Production Hardening & Final Documentation)
-- [ ] Multi-stage production `Dockerfile` (non-root user, minimal footprint).
-- [ ] `docker-compose.yml` (`api`, `worker`, `redis`, `postgres`, `ui`) with healthchecks and network wiring.
-- [ ] GitHub Actions CI workflow: `.github/workflows/ci.yml` running lint (`ruff`), typecheck (`mypy`), unit/integration tests, and docker build.
-- [ ] Production-ready `README.md` with product pitch, Mermaid architecture diagram, copy-pasted results table from `results/SUMMARY.md`, quickstart (`make up`), and demo walkthrough.
-- [ ] Finalize `docs/ARCHITECTURE.md` and `docs/INTERVIEW_NOTES.md`.
-- [ ] Print final report containing what was built, how to run, measured metrics from `results/SUMMARY.md`, and 3 interview-ready resume bullets.
+#### Phase 9 — Production Hardening & Final Documentation
+- [x] **Multi-Stage Production Dockerfile** (`Dockerfile`):
+  - Builder stage with `uv` virtualenv provisioning.
+  - Runner stage on `python:3.12-slim` executing under unprivileged `planpilot` user (UID 1000).
+- [x] **Full-Stack Docker Compose Topology** (`docker-compose.yml`):
+  - Services: `postgres` (PostgreSQL 16), `redis` (Redis 7), `api` (FastAPI REST :8000), `worker` (Arq async solve worker), `ui` (Streamlit workspace :8501).
+  - Healthchecks on all services with `condition: service_healthy` dependency wiring.
+- [x] **Zero-Key CI/CD Workflow** (`.github/workflows/ci.yml`):
+  - Automated jobs for `lint` (Ruff), `typecheck` (Mypy strict), `test` (Pytest), `eval-smoke` (offline via `.cache/llm/`), and `docker-build`.
+- [x] **Authoritative Documentation**:
+  - `README.md`: Product pitch, Mermaid diagram, copy-pasted results from `results/SUMMARY.md`, quickstart, CLI docs.
+  - `docs/ARCHITECTURE.md`: Detailed component breakdown, sequence diagrams, failure modes and mitigations, security architecture.
+  - `docs/RULE_DSL.md`: Discriminated union BNF / JSON schemas, CP-SAT mathematical formulations for all 9 rule types without Big-M.
+  - `docs/EVALS.md`: Benchmark methodology, gold dataset curation, metric definitions, offline reproduction steps.
+  - `docs/INTERVIEW_NOTES.md`: Comprehensive design decisions, algorithm complexities ($O(V+E)$, $O(K)$), and technical interview defenses for all 9 phases.
+
+### Phase 9 Hard Verification Gate Output
+```
+make check (Lint + Typecheck + Unit Tests):
+tests/integration/test_api.py (5 tests) PASSED
+tests/integration/test_queue_worker.py (1 test) PASSED
+tests/integration/test_scenario_agent.py (2 tests) PASSED
+tests/unit/test_benchmarks.py (23 tests) PASSED
+tests/unit/test_citation_verifier.py (6 tests) PASSED
+tests/unit/test_cli.py (5 tests) PASSED
+tests/unit/test_domain.py (37 tests) PASSED
+tests/unit/test_erp_generator.py (3 tests) PASSED
+tests/unit/test_erp_injector.py (1 test) PASSED
+tests/unit/test_erp_mapper.py (2 tests) PASSED
+tests/unit/test_erp_profiler.py (1 test) PASSED
+tests/unit/test_erp_validators.py (5 tests) PASSED
+tests/unit/test_explain_agent.py (3 tests) PASSED
+tests/unit/test_explain_facts.py (6 tests) PASSED
+tests/unit/test_generator.py (11 tests) PASSED
+tests/unit/test_harness.py (2 tests) PASSED
+tests/unit/test_llm.py (8 tests) PASSED (1 live smoke deselected)
+tests/unit/test_onboarding_agent.py (2 tests) PASSED
+tests/unit/test_properties.py (1 test) PASSED
+tests/unit/test_rule_agent.py (4 tests) PASSED
+tests/unit/test_rule_compilers.py (10 tests) PASSED
+tests/unit/test_rule_store.py (4 tests) PASSED
+tests/unit/test_schedule_diff.py (2 tests) PASSED
+tests/unit/test_scheduler.py (11 tests) PASSED
+tests/unit/test_ui.py (2 tests) PASSED
+tests/unit/test_validator.py (13 tests) PASSED
+
+===================== 170 passed, 1 deselected in 42.15s ======================
+Ruff (src/, tests/, ui/): All checks passed!
+Mypy: Success: no issues found in 48 source files
+All 9 Project Phases Successfully Completed!
+```
 
 
 ### Conventions

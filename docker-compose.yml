@@ -1,0 +1,110 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: planpilot-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: planpilot
+      POSTGRES_USER: planpilot
+      POSTGRES_PASSWORD: planpilot
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U planpilot -d planpilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - planpilot-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: planpilot-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - planpilot-net
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: planpilot-api
+    restart: unless-stopped
+    command: ["uvicorn", "planpilot.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://planpilot:planpilot@postgres:5432/planpilot
+      REDIS_URL: redis://redis:6379
+      PLANPILOT_API_KEY: ${PLANPILOT_API_KEY:-test-api-key}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - planpilot-net
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: planpilot-worker
+    restart: unless-stopped
+    command: ["python", "-m", "arq", "planpilot.worker.worker.WorkerSettings"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://planpilot:planpilot@postgres:5432/planpilot
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - planpilot-net
+
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: planpilot-ui
+    restart: unless-stopped
+    command: ["streamlit", "run", "ui/app.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
+    ports:
+      - "8501:8501"
+    environment:
+      PLANPILOT_API_URL: http://api:8000
+      PLANPILOT_API_KEY: ${PLANPILOT_API_KEY:-test-api-key}
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - planpilot-net
+
+networks:
+  planpilot-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
